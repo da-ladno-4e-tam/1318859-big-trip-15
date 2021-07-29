@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Михаил Бирюков](https://up.htmlacademy.ru/ecmascript/15/user/1318859).
-* Наставник: `Неизвестно`.
+* Наставник: [Сергей Рожков](https://htmlacademy.ru/profile/id1069033).
 
 ---
 
@@ -46,7 +46,7 @@ git clone SSH-адрес_вашего_форка
 
 <a href="https://htmlacademy.ru/intensive/ecmascript"><img align="left" width="50" height="50" title="HTML Academy" src="https://up.htmlacademy.ru/static/img/intensive/ecmascript/logo-for-github.svg"></a>
 
-Репозиторий создан для обучения на профессиональном курсе «[JavaScript. Архитектура клиентских приложений](https://htmlacademy.ru/intensive/ecmascript)» от [HTML Academy](https://htmlacademy.ru).
+Репозиторий создан для обучения на профессиональном курсе [«JavaScript. Архитектура клиентских приложений»](https://htmlacademy.ru/intensive/ecmascript) от [HTML Academy](https://htmlacademy.ru).
 
 [check-image]: https://github.com/htmlacademy-ecmascript/1318859-big-trip-15/workflows/Project%20check/badge.svg?branch=master
 [check-url]: https://github.com/htmlacademy-ecmascript/1318859-big-trip-15/actions
