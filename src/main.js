@@ -3,6 +3,11 @@ import {createMenuTemplate} from './view/menu.js';
 import {createFiltersTemplate} from './view/filters.js';
 import {createSortTemplate} from './view/sort.js';
 import {createRouteTemplate} from './view/route.js';
+import {generatePoint} from './mock/task.js';
+
+const POINT_COUNT = 15;
+
+const points = new Array(POINT_COUNT).fill().map(generatePoint);
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -19,4 +24,4 @@ render(tripInfoContainer, createTripInfoTemplate(), 'afterbegin');
 render(menuContainer, createMenuTemplate(), 'beforeend');
 render(filtersContainer, createFiltersTemplate(), 'beforeend');
 render(mainContentContainer, createSortTemplate(), 'beforeend');
-render(mainContentContainer, createRouteTemplate([0, 1, 2]), 'beforeend');
+render(mainContentContainer, createRouteTemplate(points), 'beforeend');
