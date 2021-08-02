@@ -153,7 +153,6 @@ const generateImage = () => (
 );
 const pictures = new Array(getRandomInteger(0, 5)).fill().map(() => generateImage());
 const getRandomdestinationDescription = () => new Array(getRandomInteger(0, 5)).fill().map(() => getRandomImageDesc()).join(' ');
-
 const generateDestination = () => (
   {
     description: getRandomdestinationDescription(),
