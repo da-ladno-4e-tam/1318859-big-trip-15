@@ -14,9 +14,7 @@ export const createTripCostTemplate = (points) => {
     return activeOffers;
   };
 
-  const totalSum = (baseSum.concat(offersSum())).reduce((sum, item) => {
-    return sum + item;
-  }, 0);
+  const totalSum = (baseSum.concat(offersSum())).reduce((sum, item) => sum + item, 0);
 
   return `<p class="trip-info__cost">
               Total: &euro;&nbsp;<span class="trip-info__cost-value">${totalSum}</span>
