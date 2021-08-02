@@ -1,5 +1,7 @@
 import dayjs from 'dayjs';
 
+const POINT_COUNT = 15;
+
 const types = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 const typesOffers = {
   'taxi': {
@@ -122,15 +124,15 @@ const getRandomInteger = (a = 0, b = 1) => {
 };
 const generateType = () => types[getRandomInteger(0, types.length - 1)];
 const generateTown = () => towns[getRandomInteger(0, towns.length - 1)];
-const generateBasePrice = getRandomInteger(2, 20) * 10;
-const isAddedOffer = Boolean(getRandomInteger(0, 1));
+const generateBasePrice = () => getRandomInteger(2, 20) * 10;
+const isAddedOffer = () => Boolean(getRandomInteger(0, 1));
 const generateStartDate = () => {
   const maxDaysGap = 5;
   const maxHoursGap = 12;
   const MinutesGap = (getRandomInteger(0, -maxDaysGap) * 24 + getRandomInteger(0, -maxHoursGap)) * 60 + getRandomInteger(0, -60);
   return dayjs().add(MinutesGap, 'minute');
 };
-const generateTripDuration = () => (getRandomInteger(0, 120));
+const generateTripDuration = () => (getRandomInteger(10, 120));
 const destinationDescriptions = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -162,19 +164,25 @@ const generateDestination = () => (
 
 const generateOffersList = (offerType) => {
   const typeOffers = typesOffers[offerType];
-  typeOffers.offers.forEach((offer) => offer.isAdded = isAddedOffer);
+  typeOffers.offers.forEach((offer) => offer.isAdded = isAddedOffer());
 
   return typeOffers;
 };
+let currentId = 0;
 
-export const generatePoint = () => (
-  {
-    type: generateType(),
-    basePrice: generateBasePrice,
-    dateFrom: generateStartDate().toDate(),
-    dateTo: generateStartDate().add(generateTripDuration(), 'minute').toDate(),
-    offers: generateOffersList(generateType()),
+export const generatePoint = () => {
+  const type = generateType();
+  const dateFrom = generateStartDate();
+  return {
+    type,
+    id: ++currentId,
+    basePrice: generateBasePrice(),
+    dateFrom: dateFrom.toDate(),
+    dateTo: dateFrom.add(generateTripDuration(), 'minute').toDate(),
+    offers: generateOffersList(type),
     destination: generateDestination(),
     isFavorite: Boolean(getRandomInteger(0, 1)),
-  }
-);
+  };
+};
+
+export const getData = () => new Array(POINT_COUNT).fill().map(generatePoint).sort((a, b) => a.dateFrom.getTime() - b.dateFrom.getTime());

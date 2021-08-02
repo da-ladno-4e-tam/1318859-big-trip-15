@@ -1,9 +1,36 @@
 import dayjs from 'dayjs';
 
 export const createEventTemplate = (point) => {
-  const {type, dateFrom, dateTo, offers, destination, isFavorite} = point;
-  const {name: town} = destination;
+  const {
+    type = '',
+    basePrice = 0,
+    dateFrom = dayjs().toDate(),
+    dateTo = dayjs().toDate(),
+    offers = {},
+    destination = {},
+    isFavorite,
+  } = point;
+  const {name: town = ''} = destination;
   const favoriteActiveClass = isFavorite ? 'event__favorite-btn--active' : '';
+  const tripDuration = dayjs(dateTo).diff(dayjs(dateFrom), 'minute');
+
+  const tripDurationFormat = () => {
+    if (tripDuration > 23 * 60 + 59) {
+      return 'DD[D] HH[H] mm[M]';
+    } else if (tripDuration > 59) {
+      return 'HH[H] mm[M]';
+    } else {
+      return 'mm[M]';
+    }
+  };
+
+  const activeOfferTemplate = (title, price, isAdded) => (isAdded ? `<li class="event__offer">
+                    <span class="event__offer-title">${title}</span>
+                    &plus;&euro;&nbsp;
+                    <span class="event__offer-price">${price}</span>
+                  </li>` : '');
+
+  const activeOffers = (offers.offers && offers.offers.length) ? offers.offers.map((offer) => activeOfferTemplate(offer.title, offer.price, offer.isAdded)).join('') : '';
 
   return `<li class="trip-events__item">
               <div class="event">
@@ -18,18 +45,14 @@ export const createEventTemplate = (point) => {
                     &mdash;
                     <time class="event__end-time" datetime="${dayjs(dateTo).format('YYYY-MM-DDTHH:mm')}">${dayjs(dateTo).format('HH:mm')}</time>
                   </p>
-                  <p class="event__duration">30M</p>
+                  <p class="event__duration">${dayjs(dateTo - dateFrom).format(tripDurationFormat())}</p>
                 </div>
                 <p class="event__price">
-                  &euro;&nbsp;<span class="event__price-value">20</span>
+                  &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
                 </p>
                 <h4 class="visually-hidden">Offers:</h4>
                 <ul class="event__selected-offers">
-                  <li class="event__offer">
-                    <span class="event__offer-title">Order Uber</span>
-                    &plus;&euro;&nbsp;
-                    <span class="event__offer-price">20</span>
-                  </li>
+                ${activeOffers}
                 </ul>
                 <button class="event__favorite-btn ${favoriteActiveClass}" type="button">
                   <span class="visually-hidden">Add to favorite</span>

@@ -1,15 +1,12 @@
 import {createEventTemplate} from './event.js';
-import {createEditingEventFormTemplate} from './editing-event-form.js';
-import {createAddingEventFormTemplate} from './adding-event-form.js';
+import {createEventFormTemplate} from './event-form.js';
 
 export const createRouteTemplate = (points) => {
-  const editingFormTemplate = createEditingEventFormTemplate();
-  const addingFormTemplate = createAddingEventFormTemplate();
+  const formTemplate = createEventFormTemplate(points[0]);
   const eventsTemplate = points.map((point) => createEventTemplate(point)).join('');
 
   return `<ul class="trip-events__list">
-${addingFormTemplate}
-${editingFormTemplate}
+${formTemplate}
 ${eventsTemplate}
 </ul>`;
 };
