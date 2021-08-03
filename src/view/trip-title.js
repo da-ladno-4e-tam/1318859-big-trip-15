@@ -1,5 +1,13 @@
-export const createTripTitleTemplate = () => (
-  `<h1 class="trip-info__title">
-Amsterdam &mdash; Chamonix &mdash; Geneva
-</h1>`
-);
+export const createTripTitleTemplate = (towns) => {
+  const firstTown = towns[0];
+  const lastTown = towns[towns.length - 1];
+  const route = (townsList) => {
+    if (townsList.length > 3) {
+      return `${firstTown} &mdash; ... &mdash; ${lastTown}`;
+    } else {
+      return `${townsList.map((town) => town).join(' &mdash; ')}`;
+    }
+  };
+
+  return `<h1 class="trip-info__title">${route(towns)}</h1>`;
+};
