@@ -76,14 +76,17 @@ render(tripInfoSection.getElement(), tripInfoMain.getElement(), RenderPosition.A
 render(tripInfoMain.getElement(), new TripTitleView(towns).getElement(), RenderPosition.BEFOREEND);
 render(tripInfoMain.getElement(), new TripDatesView(startDates, finishDates).getElement(), RenderPosition.BEFOREEND);
 
-
-if (points.length === 0) {
-  render(mainContentContainer, new NoEvents().getElement(), RenderPosition.BEFOREEND);
-} else {
-  render(mainContentContainer, new SortView().getElement(), RenderPosition.BEFOREEND);
-  const eventsListComponent = new EventsListView();
-  render(mainContentContainer, eventsListComponent.getElement(), RenderPosition.BEFOREEND);
-  for (let i = 0; i < points.length; i++) {
-    renderEvent(eventsListComponent.getElement(), points[i]);
+const renderRoute = (routeContainer, events) => {
+  if (points.length === 0) {
+    render(routeContainer, new NoEvents().getElement(), RenderPosition.BEFOREEND);
+  } else {
+    render(routeContainer, new SortView().getElement(), RenderPosition.BEFOREEND);
+    const eventsListComponent = new EventsListView();
+    render(routeContainer, eventsListComponent.getElement(), RenderPosition.BEFOREEND);
+    for (let i = 0; i < events.length; i++) {
+      renderEvent(eventsListComponent.getElement(), events[i]);
+    }
   }
-}
+};
+
+renderRoute(mainContentContainer, points);
