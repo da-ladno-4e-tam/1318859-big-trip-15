@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import {getRandomInteger} from '../utils.js';
 
 const POINT_COUNT = 15;
 
@@ -116,12 +117,17 @@ const typesOffers = {
   },
 };
 const towns = ['Chamonix', 'Amsterdam', 'Geneva', 'London', 'Paris', 'Oslo', 'Bratislava'];
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
+const destinationDescriptions = [
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  'Cras aliquet varius magna, non porta ligula feugiat eget.',
+  'Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra.',
+  'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
+  'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
+  'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
+  'Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat.',
+  'Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
+];
 
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
 const generateType = () => types[getRandomInteger(0, types.length - 1)];
 const generateTown = () => towns[getRandomInteger(0, towns.length - 1)];
 const generateBasePrice = () => getRandomInteger(2, 20) * 10;
@@ -133,16 +139,6 @@ const generateStartDate = () => {
   return dayjs().add(MinutesGap, 'minute');
 };
 const generateTripDuration = () => (getRandomInteger(10, 120));
-const destinationDescriptions = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  'Cras aliquet varius magna, non porta ligula feugiat eget.',
-  'Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra.',
-  'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
-  'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
-  'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
-  'Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat.',
-  'Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.',
-];
 const getRandomImageSrc = () => `http://picsum.photos/248/152?r=${getRandomInteger(1, 99999999)}`;
 const getRandomImageDesc = () => destinationDescriptions[getRandomInteger(0, destinationDescriptions.length - 1)];
 const generateImage = () => (
@@ -152,10 +148,10 @@ const generateImage = () => (
   }
 );
 const pictures = new Array(getRandomInteger(0, 5)).fill().map(() => generateImage());
-const getRandomdestinationDescription = () => new Array(getRandomInteger(0, 5)).fill().map(() => getRandomImageDesc()).join(' ');
+const getRandomDestinationDescription = () => new Array(getRandomInteger(0, 5)).fill().map(() => getRandomImageDesc()).join(' ');
 const generateDestination = () => (
   {
-    description: getRandomdestinationDescription(),
+    description: getRandomDestinationDescription(),
     name: generateTown(),
     pictures,
   }
