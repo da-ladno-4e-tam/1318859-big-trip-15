@@ -1,23 +1,22 @@
-// import {createTripInfoTemplate} from './view/trip-info.js';
 import MenuView from './view/menu.js';
 import FiltersView from './view/filters.js';
 import SortView from './view/sort.js';
 import NewEventButtonView from './view/new-event-button.js';
 import EventsListView from './view/events-list.js';
-import {createEventFormTemplate} from './view/event-form.js';
-import {createEventTemplate} from './view/event.js';
-
+import EventFormView from './view/event-form.js';
+import EventView from './view/event.js';
 import TripInfoSectionView from './view/trip-info-section.js';
 import TripInfoMainView from './view/trip-info-main.js';
-import {createTripTitleTemplate} from './view/trip-title.js';
-import {createTripDatesTemplate} from './view/trip-dates.js';
-import {createTripCostTemplate} from './view/trip-cost.js';
+import TripTitleView from './view/trip-title.js';
+import TripDatesView from './view/trip-dates.js';
+import TripCostView from './view/trip-cost.js';
+import NoEvents from './view/no-events.js';
 
 import {getData} from './mock/task.js';
-import {renderTemplate, renderElement, RenderPosition} from './utils.js';
+import {render, RenderPosition} from './utils.js';
 
+const filterItems = ['everything', 'future', 'past'];
 const points = getData();
-
 const towns = points.map((point) => point.destination.name);
 const startDates = points.map((point) => point.dateFrom);
 const finishDates = points.map((point) => point.dateTo);
@@ -29,25 +28,62 @@ const menuContainer = headerElement.querySelector('.trip-controls__navigation');
 const filtersContainer = headerElement.querySelector('.trip-controls__filters');
 const mainContentContainer = mainElement.querySelector('.trip-events');
 
+const renderEvent = (eventsListContainer, event) => {
+  const eventComponent = new EventView(event);
+  const eventEditComponent = new EventFormView(event);
+
+  const replaceEventToForm = () => {
+    eventsListContainer.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+  };
+
+  const replaceFormToEvent = () => {
+    eventsListContainer.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+  };
+
+  const onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      replaceFormToEvent();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  };
+  eventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replaceEventToForm();
+    document.addEventListener('keydown', onEscKeyDown);
+  });
+  eventEditComponent.getElement().querySelector('form.event--edit').addEventListener('submit', (evt) => {
+    evt.preventDefault();
+    replaceFormToEvent();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+  eventEditComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replaceFormToEvent();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  render(eventsListContainer, eventComponent.getElement(), RenderPosition.BEFOREEND);
+};
+
 const newEventButton = new NewEventButtonView();
-renderElement(tripInfoContainer, newEventButton.getElement(), RenderPosition.BEFOREEND);
-renderElement(menuContainer, new MenuView().getElement(), RenderPosition.BEFOREEND);
-renderElement(filtersContainer, new FiltersView().getElement(), RenderPosition.BEFOREEND);
-renderElement(mainContentContainer, new SortView().getElement(), RenderPosition.BEFOREEND);
-
+render(tripInfoContainer, newEventButton.getElement(), RenderPosition.BEFOREEND);
+render(menuContainer, new MenuView().getElement(), RenderPosition.BEFOREEND);
+render(filtersContainer, new FiltersView(filterItems).getElement(), RenderPosition.BEFOREEND);
 const tripInfoSection = new TripInfoSectionView();
-renderElement(tripInfoContainer, tripInfoSection.getElement(), RenderPosition.AFTERBEGIN);
-renderTemplate(tripInfoSection.getElement(), createTripCostTemplate(points), 'beforeend');
-
+render(tripInfoContainer, tripInfoSection.getElement(), RenderPosition.AFTERBEGIN);
+render(tripInfoSection.getElement(), new TripCostView(points).getElement(), RenderPosition.BEFOREEND);
 const tripInfoMain = new TripInfoMainView();
-renderElement(tripInfoSection.getElement(), tripInfoMain.getElement(), RenderPosition.AFTERBEGIN);
-renderTemplate(tripInfoMain.getElement(), createTripTitleTemplate(towns), 'beforeend');
-renderTemplate(tripInfoMain.getElement(), createTripDatesTemplate(startDates, finishDates), 'beforeend');
-
-const eventsListComponent = new EventsListView();
-renderElement(mainContentContainer, eventsListComponent.getElement(), RenderPosition.BEFOREEND);
-renderTemplate(eventsListComponent.getElement(), createEventFormTemplate(points[0]), 'afterbegin');
-const eventsTemplate = points.map((point) => createEventTemplate(point)).join('');
-renderTemplate(eventsListComponent.getElement(), eventsTemplate, 'beforeend');
+render(tripInfoSection.getElement(), tripInfoMain.getElement(), RenderPosition.AFTERBEGIN);
+render(tripInfoMain.getElement(), new TripTitleView(towns).getElement(), RenderPosition.BEFOREEND);
+render(tripInfoMain.getElement(), new TripDatesView(startDates, finishDates).getElement(), RenderPosition.BEFOREEND);
 
 
+if (points.length === 0) {
+  render(mainContentContainer, new NoEvents().getElement(), RenderPosition.BEFOREEND);
+} else {
+  render(mainContentContainer, new SortView().getElement(), RenderPosition.BEFOREEND);
+  const eventsListComponent = new EventsListView();
+  render(mainContentContainer, eventsListComponent.getElement(), RenderPosition.BEFOREEND);
+  for (let i = 0; i < points.length; i++) {
+    renderEvent(eventsListComponent.getElement(), points[i]);
+  }
+}

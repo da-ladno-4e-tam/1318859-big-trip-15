@@ -1,8 +1,9 @@
 import {createDestinationTemplate} from './destination.js';
 import {createOffersTemplate} from './offers.js';
 import dayjs from 'dayjs';
+import {createElement} from '../utils.js';
 
-export const createEventFormTemplate = (point) => {
+const createEventFormTemplate = (point) => {
   const types = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
   const towns = ['Chamonix', 'Amsterdam', 'Geneva', 'London', 'Paris', 'Oslo', 'Bratislava'];
   const {
@@ -37,7 +38,8 @@ export const createEventFormTemplate = (point) => {
     : `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
                   <button class="event__reset-btn" type="reset">Cancel</button>`;
 
-  return `<form class="event event--edit" action="#" method="post">
+  return `<li class="trip-events__item">
+<form class="event event--edit" action="#" method="post">
                 <header class="event__header">
                   <div class="event__type-wrapper">
                     <label class="event__type  event__type-btn" for="event-type-toggle-1">
@@ -88,5 +90,29 @@ export const createEventFormTemplate = (point) => {
                   ${createOffersTemplate(offers)}
                   ${createDestinationTemplate(destination)}
                 </section>
-              </form>`;
+              </form>
+</li>`;
 };
+
+export default class EventForm {
+  constructor(point) {
+    this._point = point;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventFormTemplate(this._point);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -165,7 +165,7 @@ const generateOffersList = (offerType) => {
 };
 let currentId = 0;
 
-export const generatePoint = () => {
+const generatePoint = () => {
   const type = generateType();
   const dateFrom = generateStartDate();
   return {
