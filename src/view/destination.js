@@ -1,4 +1,6 @@
-export const createDestinationTemplate = (destination) => {
+import AbstractView from './abstract.js';
+
+const createDestinationTemplate = (destination) => {
   const {
     description = '',
     pictures = [],
@@ -23,3 +25,14 @@ export const createDestinationTemplate = (destination) => {
                   </div>
                 </section>` : '';
 };
+
+export default class Destination extends AbstractView {
+  constructor(destination) {
+    super();
+    this._destination = destination;
+  }
+
+  getTemplate() {
+    return createDestinationTemplate(this._destination);
+  }
+}

@@ -1,7 +1,7 @@
-import {createDestinationTemplate} from './destination.js';
-import {createOffersTemplate} from './offers.js';
+import DestinationView from './destination.js';
+import OffersView from './offers.js';
 import dayjs from 'dayjs';
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const createEventFormTemplate = (point) => {
   const types = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
@@ -87,32 +87,20 @@ const createEventFormTemplate = (point) => {
                 </header>
                 <section class="event__details">
 
-                  ${createOffersTemplate(offers)}
-                  ${createDestinationTemplate(destination)}
+                  ${new OffersView(offers).getElement()}
+                  ${new DestinationView(destination).getElement()}
                 </section>
               </form>
 </li>`;
 };
 
-export default class EventForm {
+export default class EventForm extends AbstractView {
   constructor(point) {
+    super();
     this._point = point;
-    this._element = null;
   }
 
   getTemplate() {
     return createEventFormTemplate(this._point);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

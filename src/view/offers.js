@@ -1,4 +1,6 @@
-export const createOffersTemplate = (offers) => {
+import AbstractView from './abstract.js';
+
+const createOffersTemplate = (offers) => {
   const offersList = offers.offers ? offers.offers : {};
   const formOfferTemplate = (offer = {}) => {
     const isChecked = (offer.isAdded) ? 'checked' : '';
@@ -24,3 +26,14 @@ export const createOffersTemplate = (offers) => {
                     </div>
                   </section>` : '';
 };
+
+export default class Offers extends AbstractView {
+  constructor(offers) {
+    super();
+    this._offers = offers;
+  }
+
+  getTemplate() {
+    return createOffersTemplate(this._offers);
+  }
+}

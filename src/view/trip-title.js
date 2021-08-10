@@ -1,4 +1,4 @@
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const createTripTitleTemplate = (towns) => {
   const firstTown = towns[0];
@@ -14,25 +14,13 @@ const createTripTitleTemplate = (towns) => {
   return `<h1 class="trip-info__title">${route(towns)}</h1>`;
 };
 
-export default class TripTitle {
+export default class TripTitle extends AbstractView {
   constructor(towns) {
+    super();
     this._towns = towns;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripTitleTemplate(this._towns);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
