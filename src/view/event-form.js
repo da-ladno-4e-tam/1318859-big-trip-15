@@ -1,5 +1,3 @@
-import DestinationView from './destination.js';
-import OffersView from './offers.js';
 import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
 
@@ -12,7 +10,6 @@ const createEventFormTemplate = (point) => {
     basePrice = 0,
     dateFrom = dayjs().toDate(),
     dateTo = dayjs().toDate(),
-    offers = {},
     destination = {},
   } = point;
   const town = destination.name ? destination.name : '';
@@ -86,9 +83,6 @@ const createEventFormTemplate = (point) => {
 
                 </header>
                 <section class="event__details">
-
-                  ${new OffersView(offers).getElement()}
-                  ${new DestinationView(destination).getElement()}
                 </section>
               </form>
 </li>`;
@@ -98,9 +92,32 @@ export default class EventForm extends AbstractView {
   constructor(point) {
     super();
     this._point = point;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
     return createEventFormTemplate(this._point);
+  }
+
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
+  }
+
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('form.event--edit').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 }
