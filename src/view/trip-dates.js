@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const createTripDatesTemplate = (startDates, finishDates) => {
   const tripStart = startDates.sort((a, b) => a.getTime() - b.getTime())[0];
@@ -10,26 +10,14 @@ const createTripDatesTemplate = (startDates, finishDates) => {
   return `<p class="trip-info__dates">${dayjs(tripStart).format(tripStartFormat)}&nbsp;&mdash;&nbsp;${dayjs(tripFinish).format(tripFinishFormat)}</p>`;
 };
 
-export default class TripDates {
+export default class TripDates extends AbstractView {
   constructor(startDates, finishDates) {
+    super();
     this._startDates = startDates;
     this._finishDates = finishDates;
-    this._element = null;
   }
 
   getTemplate() {
     return createTripDatesTemplate(this._startDates, this._finishDates);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

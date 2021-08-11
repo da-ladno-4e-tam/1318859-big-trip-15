@@ -1,7 +1,5 @@
-import {createDestinationTemplate} from './destination.js';
-import {createOffersTemplate} from './offers.js';
 import dayjs from 'dayjs';
-import {createElement} from '../utils.js';
+import AbstractView from './abstract.js';
 
 const createEventFormTemplate = (point) => {
   const types = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
@@ -12,7 +10,6 @@ const createEventFormTemplate = (point) => {
     basePrice = 0,
     dateFrom = dayjs().toDate(),
     dateTo = dayjs().toDate(),
-    offers = {},
     destination = {},
   } = point;
   const town = destination.name ? destination.name : '';
@@ -86,33 +83,41 @@ const createEventFormTemplate = (point) => {
 
                 </header>
                 <section class="event__details">
-
-                  ${createOffersTemplate(offers)}
-                  ${createDestinationTemplate(destination)}
                 </section>
               </form>
 </li>`;
 };
 
-export default class EventForm {
+export default class EventForm extends AbstractView {
   constructor(point) {
+    super();
     this._point = point;
-    this._element = null;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
+    this._editClickHandler = this._editClickHandler.bind(this);
   }
 
   getTemplate() {
     return createEventFormTemplate(this._point);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  _editClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.editClick();
+  }
+
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('form.event--edit').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  setEditClickHandler(callback) {
+    this._callback.editClick = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
   }
 }
