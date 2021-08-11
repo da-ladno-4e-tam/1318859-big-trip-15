@@ -14,7 +14,7 @@ const createDestinationTemplate = (destination) => {
   };
   const destinationGallery = pictures.map((picture) => destinationPictureTemplate(picture)).join('');
 
-  return (description || pictures.length) ? `<section class="event__section  event__section--destination">
+  return `<section class="event__section  event__section--destination">
                   <h3 class="event__section-title  event__section-title--destination">Destination</h3>
                   <p class="event__destination-description">${description}</p>
 
@@ -23,7 +23,7 @@ const createDestinationTemplate = (destination) => {
                       ${destinationGallery}
                     </div>
                   </div>
-                </section>` : '';
+                </section>`;
 };
 
 export default class Destination extends AbstractView {

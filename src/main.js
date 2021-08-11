@@ -35,8 +35,12 @@ const renderEvent = (eventsListContainer, event) => {
   const eventFormComponent = new EventFormView(event);
   const formOffersContainer = eventFormComponent.getElement().querySelector('.event__details');
 
-  render(formOffersContainer, new OffersView(event.offers), RenderPosition.BEFOREEND);
-  render(formOffersContainer, new DestinationView(event.destination), RenderPosition.BEFOREEND);
+  if (event.offers.offers.length) {
+    render(formOffersContainer, new OffersView(event.offers), RenderPosition.BEFOREEND);
+  }
+  if (event.destination.description || event.destination.pictures.length) {
+    render(formOffersContainer, new DestinationView(event.destination), RenderPosition.BEFOREEND);
+  }
 
   const replaceEventToForm = () => {
     replace(eventFormComponent, eventComponent);
