@@ -1,9 +1,26 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
+import {towns, types} from '../mock/task.js';
+
+const createEventFormButtonsTemplate = (id) => (
+  id
+    ? `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+                  <button class="event__reset-btn" type="reset">Delete</button>
+                  <button class="event__rollup-btn" type="button">
+                    <span class="visually-hidden">Open event</span>
+                  </button>`
+    : `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+                  <button class="event__reset-btn" type="reset">Cancel</button>`
+);
+
+const createEventTypeItemTemplate = (eventType, type) => (
+  `<div class="event__type-item">
+                          <input id="event-type-${eventType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}" ${eventType === type ? 'checked' : ''}>
+                          <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-1">${eventType}</label>
+                        </div>`
+);
 
 const createEventFormTemplate = (point) => {
-  const types = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-  const towns = ['Chamonix', 'Amsterdam', 'Geneva', 'London', 'Paris', 'Oslo', 'Bratislava'];
   const {
     type = '',
     id = 0,
@@ -13,27 +30,15 @@ const createEventFormTemplate = (point) => {
     destination = {},
   } = point;
   const town = destination.name ? destination.name : '';
-  const eventTypeItemTemplate = (eventType = '') => {
-    const isChecked = (eventType === type) ? 'checked' : '';
 
-    return `<div class="event__type-item">
-                          <input id="event-type-${eventType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}" ${isChecked}>
-                          <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-1">${eventType}</label>
-                        </div>`;
-  };
-  const eventTypeItems = types.map((eventType) => eventTypeItemTemplate(eventType)).join('');
+  // createEventFormTemplate
+
+  const eventTypeItems = types.map((eventType) => createEventTypeItemTemplate(eventType, type)).join('');
 
   const townItemTemplate = (townItem = '') => (`<option value="${townItem}"></option>`);
   const townItems = towns.map((townItem) => townItemTemplate(townItem)).join('');
 
-  const formButtonsTemplate = id
-    ? `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Delete</button>
-                  <button class="event__rollup-btn" type="button">
-                    <span class="visually-hidden">Open event</span>
-                  </button>`
-    : `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-                  <button class="event__reset-btn" type="reset">Cancel</button>`;
+  const formButtonsTemplate = createEventFormButtonsTemplate(id);
 
   return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">

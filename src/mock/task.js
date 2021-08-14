@@ -3,7 +3,8 @@ import {getRandomInteger} from '../utils/common.js';
 
 const POINT_COUNT = 15;
 
-const types = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+export const types = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
+export const towns = ['Chamonix', 'Amsterdam', 'Geneva', 'London', 'Paris', 'Oslo', 'Bratislava'];
 const typesOffers = {
   'taxi': {
     type: 'taxi',
@@ -116,7 +117,6 @@ const typesOffers = {
       [],
   },
 };
-const towns = ['Chamonix', 'Amsterdam', 'Geneva', 'London', 'Paris', 'Oslo', 'Bratislava'];
 const destinationDescriptions = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
   'Cras aliquet varius magna, non porta ligula feugiat eget.',
@@ -147,13 +147,13 @@ const generateImage = () => (
     description: getRandomImageDesc(),
   }
 );
-const pictures = new Array(getRandomInteger(0, 5)).fill().map(() => generateImage());
+const getRandomPictures = () => new Array(getRandomInteger(0, 5)).fill().map(() => generateImage());
 const getRandomDestinationDescription = () => new Array(getRandomInteger(0, 5)).fill().map(() => getRandomImageDesc()).join(' ');
 const generateDestination = () => (
   {
     description: getRandomDestinationDescription(),
     name: generateTown(),
-    pictures,
+    pictures: getRandomPictures(),
   }
 );
 

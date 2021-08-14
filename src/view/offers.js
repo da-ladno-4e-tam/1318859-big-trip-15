@@ -18,13 +18,13 @@ const createOffersTemplate = (offers) => {
   };
   const formOffersList = offersList.map((offer) => formOfferTemplate(offer)).join('');
 
-  return offersList.length ? `<section class="event__section  event__section--offers">
+  return `<section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
                     <div class="event__available-offers">
                     ${formOffersList}
                     </div>
-                  </section>` : '';
+                  </section>`;
 };
 
 export default class Offers extends AbstractView {
