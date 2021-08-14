@@ -14,6 +14,7 @@ export default class Route {
     this._noEventsComponent = new NoEventsView();
 
     this._handleEventChange = this._handleEventChange.bind(this);
+    this._handleModeChange = this._handleModeChange.bind(this);
   }
 
   init(points) {
@@ -31,7 +32,7 @@ export default class Route {
   _renderEvent(point) {
     // Метод, куда уйдёт логика созданию и рендерингу компонетов задачи,
     // текущая функция renderTask в main.js
-    const eventPresenter = new EventPresenter(this._eventsListViewComponent, this._handleEventChange);
+    const eventPresenter = new EventPresenter(this._eventsListViewComponent, this._handleEventChange, this._handleModeChange);
     eventPresenter.init(point);
     this._eventPresenter.set(point.id, eventPresenter);
   }
@@ -57,6 +58,10 @@ export default class Route {
   _handleEventChange(updatedEvent) {
     this._points = updateItem(this._points, updatedEvent);
     this._eventPresenter.get(updatedEvent.id).init(updatedEvent);
+  }
+
+  _handleModeChange() {
+    this._eventPresenter.forEach((presenter) => presenter.resetMode());
   }
 
   _renderRoute() {

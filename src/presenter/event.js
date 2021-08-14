@@ -4,13 +4,20 @@ import OffersView from '../view/offers.js';
 import DestinationView from '../view/destination.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING',
+};
+
 export default class Route {
-  constructor(eventsContainer, changeData) {
+  constructor(eventsContainer, changeData, changeMode) {
     this._eventsContainer = eventsContainer;
     this._changeData = changeData;
+    this._changeMode = changeMode;
 
     this._eventComponent = null;
     this._eventFormComponent = null;
+    this._mode = Mode.DEFAULT;
 
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
@@ -47,11 +54,11 @@ export default class Route {
 
     // Проверка на наличие в DOM необходима,
     // чтобы не пытаться заменить то, что не было отрисовано
-    if (this._eventsContainer.getElement().contains(prevEventComponent.getElement())) {
+    if (this._mode === Mode.DEFAULT) {
       replace(this._eventComponent, prevEventComponent);
     }
 
-    if (this._eventsContainer.getElement().contains(prevEventFormComponent.getElement())) {
+    if (this._mode === Mode.EDITING) {
       replace(this._eventFormComponent, prevEventFormComponent);
     }
 
@@ -64,14 +71,23 @@ export default class Route {
     remove(this._eventFormComponent);
   }
 
+  resetMode() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._replaceFormToEvent();
+    }
+  }
+
   _replaceEventToForm() {
     replace(this._eventFormComponent, this._eventComponent);
     document.addEventListener('keydown', this._escKeyDownHandler);
+    this._changeMode();
+    this._mode = Mode.EDITING;
   }
 
   _replaceFormToEvent() {
     replace(this._eventComponent, this._eventFormComponent);
     document.removeEventListener('keydown', this._escKeyDownHandler);
+    this._mode = Mode.DEFAULT;
   }
 
   _handleEditClick() {
