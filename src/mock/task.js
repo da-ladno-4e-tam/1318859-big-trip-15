@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {getRandomInteger} from '../utils/common.js';
 
-const POINT_COUNT = 15;
+const POINT_COUNT = 5;
 
 export const types = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
 export const towns = ['Chamonix', 'Amsterdam', 'Geneva', 'London', 'Paris', 'Oslo', 'Bratislava'];
