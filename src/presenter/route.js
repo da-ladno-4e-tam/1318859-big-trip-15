@@ -4,6 +4,7 @@ import NoEventsView from '../view/no-events.js';
 import {updateItem} from '../utils/common.js';
 import {render, RenderPosition} from '../utils/render.js';
 import EventPresenter from './event.js';
+import {SortType} from '../const.js';
 
 export default class Route {
   constructor(routeContainer) {
@@ -15,30 +16,53 @@ export default class Route {
 
     this._handleEventChange = this._handleEventChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init(points) {
     this._points = points.slice();
-    // Метод для инициализации (начала работы) модуля,
-    // малая часть текущей функции renderBoard в main.js
     this._renderRoute();
   }
 
+  _sortEvents(sortType) {
+    switch (sortType) {
+      case SortType.DEFAULT:
+        this._points.sort((a, b) => a.dateFrom.getTime() - b.dateFrom.getTime());
+        break;
+      case SortType.TIME:
+        this._points.sort((a, b) => (a.dateFrom.getTime() - a.dateTo.getTime()) - (b.dateFrom.getTime() - b.dateTo.getTime()));
+        break;
+      case SortType.PRICE:
+        this._points.sort((a, b) => b.basePrice - a.basePrice);
+        break;
+      default:
+    }
+
+    this._currentSortType = sortType;
+  }
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+
+    this._sortEvents(sortType);
+    this._clearEventList();
+    this._renderEvents();
+  }
+
   _renderSort() {
-    // Метод для рендеринга сортировки
     render(this._routeContainer, this._sortComponent, RenderPosition.BEFOREEND);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderEvent(point) {
-    // Метод, куда уйдёт логика созданию и рендерингу компонетов задачи,
-    // текущая функция renderTask в main.js
     const eventPresenter = new EventPresenter(this._eventsListViewComponent, this._handleEventChange, this._handleModeChange);
     eventPresenter.init(point);
     this._eventPresenter.set(point.id, eventPresenter);
   }
 
   _renderEvents() {
-    // Метод для рендеринга N-задач за раз
     render(this._routeContainer, this._eventsListViewComponent, RenderPosition.BEFOREEND);
     for (let i = 0; i < this._points.length; i++) {
       this._renderEvent(this._points[i]);
@@ -46,7 +70,6 @@ export default class Route {
   }
 
   _renderNoEvents() {
-    // Метод для рендеринга заглушки
     render(this._routeContainer, this._noEventsComponent, RenderPosition.BEFOREEND);
   }
 
@@ -65,8 +88,6 @@ export default class Route {
   }
 
   _renderRoute() {
-    // Метод для инициализации (начала работы) модуля,
-    // бОльшая часть текущей функции renderBoard в main.js
     if (this._points.length === 0) {
       this._renderNoEvents();
     } else {

@@ -21,6 +21,7 @@ export default class Route {
 
     this._handleEditClick = this._handleEditClick.bind(this);
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
+    this._handleFormEsc = this._handleFormEsc.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
   }
@@ -44,7 +45,7 @@ export default class Route {
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventFormComponent.setFormSubmitHandler(this._handleFormSubmit);
-    this._eventFormComponent.setEditClickHandler(this._handleFormSubmit);
+    this._eventFormComponent.setEditClickHandler(this._handleFormEsc);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
     if (prevEventComponent === null || prevEventFormComponent === null) {
@@ -103,6 +104,10 @@ export default class Route {
 
   _handleFormSubmit(point) {
     this._changeData(point);
+    this._replaceFormToEvent();
+  }
+
+  _handleFormEsc() {
     this._replaceFormToEvent();
   }
 
