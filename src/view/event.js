@@ -46,7 +46,7 @@ const createEventTemplate = (point) => {
                     &mdash;
                     <time class="event__end-time" datetime="${dayjs(dateTo).format('YYYY-MM-DDTHH:mm')}">${dayjs(dateTo).format('HH:mm')}</time>
                   </p>
-                  <p class="event__duration">${dayjs(dateTo - dateFrom).format(tripDurationFormat())}</p>
+                  <p class="event__duration">${dayjs(dateTo - dateFrom + dateFrom.getTimezoneOffset() * 60000).format(tripDurationFormat())}</p>
                 </div>
                 <p class="event__price">
                   &euro;&nbsp;<span class="event__price-value">${basePrice}</span>

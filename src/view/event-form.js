@@ -30,11 +30,7 @@ const createEventFormTemplate = (point) => {
     destination = {},
   } = point;
   const town = destination.name ? destination.name : '';
-
-  // createEventFormTemplate
-
   const eventTypeItems = types.map((eventType) => createEventTypeItemTemplate(eventType, type)).join('');
-
   const townItemTemplate = (townItem = '') => (`<option value="${townItem}"></option>`);
   const townItems = towns.map((townItem) => townItemTemplate(townItem)).join('');
 
