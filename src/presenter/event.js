@@ -9,7 +9,7 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
-export default class Route {
+export default class Event {
   constructor(eventsContainer, changeData, changeMode) {
     this._eventsContainer = eventsContainer;
     this._changeData = changeData;
@@ -36,10 +36,10 @@ export default class Route {
     this._eventFormComponent = new EventFormView(point);
     this._formOffersContainer = this._eventFormComponent.getElement().querySelector('.event__details');
 
-    if (point.offers.offers.length) {
+    if (this._point.offers.offers.length) {
       this._renderOffers();
     }
-    if (point.destination.description || point.destination.pictures.length) {
+    if (this._point.destination.description || this._point.destination.pictures.length) {
       this._renderDescription();
     }
 
@@ -48,23 +48,7 @@ export default class Route {
     this._eventFormComponent.setEditClickHandler(this._handleFormEsc);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
 
-    if (prevEventComponent === null || prevEventFormComponent === null) {
-      render(this._eventsContainer, this._eventComponent, RenderPosition.BEFOREEND);
-      return;
-    }
-
-    // Проверка на наличие в DOM необходима,
-    // чтобы не пытаться заменить то, что не было отрисовано
-    if (this._mode === Mode.DEFAULT) {
-      replace(this._eventComponent, prevEventComponent);
-    }
-
-    if (this._mode === Mode.EDITING) {
-      replace(this._eventFormComponent, prevEventFormComponent);
-    }
-
-    remove(prevEventComponent);
-    remove(prevEventFormComponent);
+    this._reinit(prevEventComponent, prevEventFormComponent);
   }
 
   destroy() {
@@ -76,6 +60,23 @@ export default class Route {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceFormToEvent();
     }
+  }
+
+  _reinit(prevEventComponent, prevEventFormComponent) {
+    if (prevEventComponent === null || prevEventFormComponent === null) {
+      render(this._eventsContainer, this._eventComponent, RenderPosition.BEFOREEND);
+      return;
+    }
+
+    if (this._mode === Mode.DEFAULT) {
+      replace(this._eventComponent, prevEventComponent);
+    }
+    if (this._mode === Mode.EDITING) {
+      replace(this._eventFormComponent, prevEventFormComponent);
+    }
+
+    remove(prevEventComponent);
+    remove(prevEventFormComponent);
   }
 
   _replaceEventToForm() {
