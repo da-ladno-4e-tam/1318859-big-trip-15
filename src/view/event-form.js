@@ -96,10 +96,83 @@ export default class EventForm extends AbstractView {
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._editClickHandler = this._editClickHandler.bind(this);
+
+
+    this._typeToggleHandler = this._typeToggleHandler.bind(this);
+    this._townToggleHandler = this._townToggleHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
     return createEventFormTemplate(this._point);
+  }
+
+  updateData(update) {
+    if (!update) {
+      return;
+    }
+    // this._point должен стать this._data
+    this._point = Object.assign(
+      {},
+      this._point,
+      update,
+    );
+
+    this.updateElement();
+  }
+
+  updateElement() {
+    const prevElement = this.getElement();
+    const parent = prevElement.parentElement;
+    this.removeElement();
+
+    const newElement = this.getElement();
+
+    parent.replaceChild(newElement, prevElement);
+
+    this.restoreHandlers();
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      // событие по выбору пункта из списка
+      .querySelector('.event__type-group')
+      .addEventListener('change', this._typeToggleHandler);
+    this.getElement()
+      // событие по выбору пункта из списка
+      .querySelector('#event-destination-1')
+      .addEventListener('change', this._townToggleHandler);
+  }
+
+  _typeToggleHandler(evt) {
+    console.log(evt.target);
+    if (evt.target.tagName !== 'LABEL' || !evt.target.dataset.sortType) {
+      return;
+    }
+
+    evt.preventDefault();
+    console.log(evt.target);
+    if (evt.target.tagName !== 'OPTION' || !evt.target.dataset.sortType) {
+      return;
+    }
+    this.updateData({
+      // this._point должен стать this._data
+      town: evt.target.value,
+    });
+  }
+
+  _townToggleHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      // this._point должен стать this._data
+      town: evt.target.value,
+    });
   }
 
   _formSubmitHandler(evt) {
