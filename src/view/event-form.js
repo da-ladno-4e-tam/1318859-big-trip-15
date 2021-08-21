@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
-import {towns, types} from '../mock/task.js';
+import {towns, types, destinations} from '../mock/task.js';
+import OffersView from './offers.js';
+import DestinationView from './destination.js';
 
 const createEventFormButtonsTemplate = (id) => (
   id
@@ -13,9 +15,9 @@ const createEventFormButtonsTemplate = (id) => (
                   <button class="event__reset-btn" type="reset">Cancel</button>`
 );
 
-const createEventTypeItemTemplate = (eventType, type) => (
+const createEventTypeItemTemplate = (eventType, isChecked) => (
   `<div class="event__type-item">
-                          <input id="event-type-${eventType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}" ${eventType === type ? 'checked' : ''}>
+                          <input id="event-type-${eventType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}" ${isChecked ? 'checked' : ''}>
                           <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-1">${eventType}</label>
                         </div>`
 );
@@ -30,9 +32,13 @@ const createEventFormTemplate = (data) => {
     destination = {},
   } = data;
   const town = destination.name ? destination.name : '';
-  const eventTypeItems = types.map((eventType) => createEventTypeItemTemplate(eventType, type)).join('');
+  const eventTypeItems = types.map((eventType) => createEventTypeItemTemplate(eventType, type === eventType)).join('');
   const townItemTemplate = (townItem = '') => (`<option value="${townItem}"></option>`);
   const townItems = towns.map((townItem) => townItemTemplate(townItem)).join('');
+  const offersComponent = new OffersView(data.offers);
+  const offersDescription = new DestinationView(data.destination);
+  const offerItems = data.offers.offers.length ? offersComponent.getTemplate() : '';
+  const description = (data.destination.description || data.destination.pictures.length) ? offersDescription.getTemplate() : '';
 
   const formButtonsTemplate = createEventFormButtonsTemplate(id);
 
@@ -84,6 +90,8 @@ const createEventFormTemplate = (data) => {
 
                 </header>
                 <section class="event__details">
+                ${offerItems}
+                ${description}
                 </section>
               </form>
 </li>`;
@@ -100,6 +108,7 @@ export default class EventForm extends AbstractView {
 
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
     this._townToggleHandler = this._townToggleHandler.bind(this);
+    this._priceInputHandler = this._priceInputHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -108,7 +117,7 @@ export default class EventForm extends AbstractView {
     return createEventFormTemplate(this._data);
   }
 
-  updateData(update) {
+  updateData(update, justDataUpdating) {
     if (!update) {
       return;
     }
@@ -118,6 +127,10 @@ export default class EventForm extends AbstractView {
       update,
     );
 
+    if (justDataUpdating) {
+      return;
+    }
+    console.log(this._data);
     this.updateElement();
   }
 
@@ -147,31 +160,35 @@ export default class EventForm extends AbstractView {
       // событие по выбору пункта из списка
       .querySelector('#event-destination-1')
       .addEventListener('change', this._townToggleHandler);
+    this.getElement()
+      .querySelector('#event-price-1')
+      .addEventListener('input', this._priceInputHandler);
+  }
+
+  _priceInputHandler(evt) {
+    evt.preventDefault();
+    this.updateData({
+      price: evt.target.value,
+    }, true);
   }
 
   _typeToggleHandler(evt) {
-    console.log(evt.target);
-    if (evt.target.tagName !== 'LABEL' || !evt.target.dataset.sortType) {
-      return;
-    }
-
     evt.preventDefault();
-    console.log(evt.target);
-    if (evt.target.tagName !== 'OPTION' || !evt.target.dataset.sortType) {
+    if (evt.target.tagName !== 'INPUT') {
       return;
     }
     this.updateData({
-      // this._point должен стать this._data
-      town: evt.target.value,
+      type: evt.target.value,
+      offers: this._data.offers
     });
   }
 
   _townToggleHandler(evt) {
-    evt.preventDefault();
+    console.log(evt.target.value);
     this.updateData({
-      // this._point должен стать this._data
-      town: evt.target.value,
+      destination: destinations.filter((item) => item["name"] === evt.target.value)[0]
     });
+    console.log(this._data);
   }
 
   _formSubmitHandler(evt) {

@@ -13,6 +13,7 @@ import {render, RenderPosition} from './utils/render.js';
 
 const filterItems = ['everything', 'future', 'past'];
 const points = getData();
+console.log(points);
 const towns = points.map((point) => point.destination.name);
 const startDates = points.map((point) => point.dateFrom);
 const finishDates = points.map((point) => point.dateTo);
