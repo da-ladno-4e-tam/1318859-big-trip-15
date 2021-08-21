@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
-import {towns, types, destinations} from '../mock/task.js';
+import {towns, types, offers, destinations} from '../mock/task.js';
 import OffersView from './offers.js';
 import DestinationView from './destination.js';
 
@@ -37,6 +37,7 @@ const createEventFormTemplate = (data) => {
   const townItems = towns.map((townItem) => townItemTemplate(townItem)).join('');
   const offersComponent = new OffersView(data.offers);
   const offersDescription = new DestinationView(data.destination);
+  console.log(data);
   const offerItems = data.offers.offers.length ? offersComponent.getTemplate() : '';
   const description = (data.destination.description || data.destination.pictures.length) ? offersDescription.getTemplate() : '';
 
@@ -109,6 +110,7 @@ export default class EventForm extends AbstractView {
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
     this._townToggleHandler = this._townToggleHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
+    this._offerChangeHandler = this._offerChangeHandler.bind(this);
 
     this._setInnerHandlers();
   }
@@ -130,7 +132,6 @@ export default class EventForm extends AbstractView {
     if (justDataUpdating) {
       return;
     }
-    console.log(this._data);
     this.updateElement();
   }
 
@@ -153,16 +154,31 @@ export default class EventForm extends AbstractView {
 
   _setInnerHandlers() {
     this.getElement()
-      // событие по выбору пункта из списка
       .querySelector('.event__type-group')
       .addEventListener('change', this._typeToggleHandler);
     this.getElement()
-      // событие по выбору пункта из списка
       .querySelector('#event-destination-1')
       .addEventListener('change', this._townToggleHandler);
     this.getElement()
       .querySelector('#event-price-1')
       .addEventListener('input', this._priceInputHandler);
+    if (this._data.offers.offers.length) {
+      this.getElement()
+        .querySelector('.event__available-offers')
+        .addEventListener('change', this._offerChangeHandler);
+    }
+  }
+
+  _offerChangeHandler(evt) {
+    evt.preventDefault();
+    console.log(evt.target);
+    this.updateData({
+      offers: this._data.offers.map((item) => {
+        item.forEach((offer) => {
+          offer['isAdded'] = evt.target.checked;
+        });
+      }),
+    });
   }
 
   _priceInputHandler(evt) {
@@ -179,16 +195,14 @@ export default class EventForm extends AbstractView {
     }
     this.updateData({
       type: evt.target.value,
-      offers: this._data.offers
+      offers: offers.filter((item) => item['type'] === evt.target.value)[0],
     });
   }
 
   _townToggleHandler(evt) {
-    console.log(evt.target.value);
     this.updateData({
-      destination: destinations.filter((item) => item["name"] === evt.target.value)[0]
+      destination: destinations.filter((item) => item['name'] === evt.target.value)[0],
     });
-    console.log(this._data);
   }
 
   _formSubmitHandler(evt) {
@@ -212,37 +226,11 @@ export default class EventForm extends AbstractView {
   }
 
   static parsePointToData(point) {
-    return Object.assign(
-      {},
-      point,
-      {
-        type: point.type,
-        town: point.destination.name,
-      },
-    );
+    return Object.assign({}, point);
   }
 
   static parseDataToPoint(data) {
     data = Object.assign({}, data);
-
-    /*if (!data.isDueDate) {
-      data.dueDate = null;
-    }
-
-    if (!data.isRepeating) {
-      data.repeating = {
-        mo: false,
-        tu: false,
-        we: false,
-        th: false,
-        fr: false,
-        sa: false,
-        su: false,
-      };
-    }
-
-    delete data.isDueDate;
-    delete data.isRepeating;*/
 
     return data;
   }
