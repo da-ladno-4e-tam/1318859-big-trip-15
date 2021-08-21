@@ -20,7 +20,7 @@ const createEventTypeItemTemplate = (eventType, type) => (
                         </div>`
 );
 
-const createEventFormTemplate = (point) => {
+const createEventFormTemplate = (data) => {
   const {
     type = '',
     id = 0,
@@ -28,7 +28,7 @@ const createEventFormTemplate = (point) => {
     dateFrom = dayjs().toDate(),
     dateTo = dayjs().toDate(),
     destination = {},
-  } = point;
+  } = data;
   const town = destination.name ? destination.name : '';
   const eventTypeItems = types.map((eventType) => createEventTypeItemTemplate(eventType, type)).join('');
   const townItemTemplate = (townItem = '') => (`<option value="${townItem}"></option>`);
@@ -92,7 +92,7 @@ const createEventFormTemplate = (point) => {
 export default class EventForm extends AbstractView {
   constructor(point) {
     super();
-    this._point = point;
+    this._data = EventForm.parsePointToData(point);
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._editClickHandler = this._editClickHandler.bind(this);
@@ -105,17 +105,16 @@ export default class EventForm extends AbstractView {
   }
 
   getTemplate() {
-    return createEventFormTemplate(this._point);
+    return createEventFormTemplate(this._data);
   }
 
   updateData(update) {
     if (!update) {
       return;
     }
-    // this._point должен стать this._data
-    this._point = Object.assign(
+    this._data = Object.assign(
       {},
-      this._point,
+      this._data,
       update,
     );
 
@@ -177,7 +176,7 @@ export default class EventForm extends AbstractView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._point);
+    this._callback.formSubmit(EventForm.parseDataToPoint(this._data));
   }
 
   _editClickHandler(evt) {
@@ -193,5 +192,41 @@ export default class EventForm extends AbstractView {
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
+  }
+
+  static parsePointToData(point) {
+    return Object.assign(
+      {},
+      point,
+      {
+        type: point.type,
+        town: point.destination.name,
+      },
+    );
+  }
+
+  static parseDataToPoint(data) {
+    data = Object.assign({}, data);
+
+    /*if (!data.isDueDate) {
+      data.dueDate = null;
+    }
+
+    if (!data.isRepeating) {
+      data.repeating = {
+        mo: false,
+        tu: false,
+        we: false,
+        th: false,
+        fr: false,
+        sa: false,
+        su: false,
+      };
+    }
+
+    delete data.isDueDate;
+    delete data.isRepeating;*/
+
+    return data;
   }
 }

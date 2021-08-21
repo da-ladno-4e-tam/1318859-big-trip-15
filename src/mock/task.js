@@ -12,20 +12,24 @@ const typesOffers = {
       [
         {
           title: 'Upgrade to a business class',
-          price: 120,
+          price: 190,
         },
         {
           title: 'Choose the radio station',
-          price: 60,
+          price: 30,
         },
         {
-          title: 'let me beep!!',
-          price: 200,
+          title: 'Choose temperature',
+          price: 170,
         },
         {
-          title: 'Open a window',
-          price: 20,
+          title: 'Drive quickly, I\'m in a hurry',
+          price: 100,
         },
+        {
+          title: 'Drive slowly',
+          price: 110,
+        }
       ],
   },
   'bus': {
@@ -33,16 +37,16 @@ const typesOffers = {
     offers:
       [
         {
-          title: 'Sing favorite songs all the way',
-          price: 20,
-        },
-        {
-          title: 'let me beep!!',
-          price: 300,
-        },
-        {
-          title: 'Open a window',
+          title: 'Infotainment system',
           price: 50,
+        },
+        {
+          title: 'Order meal',
+          price: 100,
+        },
+        {
+          title: 'Choose seats',
+          price: 190,
         },
       ],
   },
@@ -51,28 +55,61 @@ const typesOffers = {
     offers:
       [
         {
-          title: 'get drunk in the dining car',
-          price: 60,
+          title: 'Book a taxi at the arrival point',
+          price: 110,
         },
         {
-          title: 'Open a window',
-          price: 20,
+          title: 'Order a breakfast',
+          price: 80,
         },
+        {
+          title: 'Wake up at a certain time',
+          price: 140,
+        }
       ],
   },
   'ship': {
     type: 'ship',
     offers:
-      [],
+      [
+        {
+          title: 'Choose meal',
+          price: 130,
+        },
+        {
+          title: 'Choose seats',
+          price: 160,
+        },
+        {
+          title: 'Upgrade to comfort class',
+          price: 170,
+        },
+        {
+          title: 'Upgrade to business class',
+          price: 150,
+        },
+        {
+          title: 'Add luggage',
+          price: 100,
+        },
+        {
+          title: 'Business lounge',
+          price: 40,
+        }
+      ],
   },
   'drive': {
     type: 'drive',
     offers:
       [
         {
-          title: 'Sing favorite songs all the way',
-          price: 120,
+          title: 'Choose comfort class',
+          price: 110,
         },
+        {
+          title: 'Choose business class',
+          price: 180,
+        }
       ],
   },
   'flight': {
@@ -80,31 +117,56 @@ const typesOffers = {
     offers:
       [
         {
-          title: 'Upgrade to a business class',
+          title: 'Choose meal',
           price: 120,
         },
         {
-          title: 'Choose the radio station',
-          price: 60,
+          title: 'Choose seats',
+          price: 90,
         },
         {
-          title: 'let me beep!!',
-          price: 200,
+          title: 'Upgrade to comfort class',
+          price: 120,
         },
         {
-          title: 'Open a window',
-          price: 1000000,
+          title: 'Upgrade to business class',
+          price: 120,
         },
         {
-          title: 'play catch-up with stewardesses',
-          price: 100,
+          title: 'Add luggage',
+          price: 170,
         },
+        {
+          title: 'Business lounge',
+          price: 160,
+        }
       ],
   },
   'check-in': {
     type: 'check-in',
     offers:
-      [],
+      [
+        {
+          title: 'Choose the time of check-in',
+          price: 70,
+        },
+        {
+          title: 'Choose the time of check-out',
+          price: 190,
+        },
+        {
+          title: 'Add breakfast',
+          price: 110,
+        },
+        {
+          title: 'Laundry',
+          price: 140,
+        },
+        {
+          title: 'Order a meal from the restaurant',
+          price: 30,
+        }
+      ],
   },
   'sightseeing': {
     type: 'sightseeing',
@@ -114,7 +176,16 @@ const typesOffers = {
   'restaurant': {
     type: 'restaurant',
     offers:
-      [],
+      [
+        {
+          title: 'Choose live music',
+          price: 150,
+        },
+        {
+          title: 'Choose VIP area',
+          price: 70,
+        }
+      ],
   },
 };
 const destinationDescriptions = [
