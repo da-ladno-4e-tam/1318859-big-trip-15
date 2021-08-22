@@ -48,6 +48,7 @@ export default class Event {
 
   resetMode() {
     if (this._mode !== Mode.DEFAULT) {
+      this._eventFormComponent.reset(this._point);
       this._replaceFormToEvent();
     }
   }
@@ -89,6 +90,7 @@ export default class Event {
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this._eventFormComponent.reset(this._point);
       this._replaceFormToEvent();
     }
   }
@@ -99,6 +101,7 @@ export default class Event {
   }
 
   _handleFormEsc() {
+    this._eventFormComponent.reset(this._point);
     this._replaceFormToEvent();
   }
 

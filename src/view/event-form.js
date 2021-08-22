@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import AbstractView from './abstract.js';
+import SmartView from './smart.js';
 import {towns, types, offers, destinations} from '../mock/task.js';
 import OffersView from './offers.js';
 import DestinationView from './destination.js';
@@ -38,7 +38,6 @@ const createEventFormTemplate = (data) => {
   const townItems = towns.map((townItem) => townItemTemplate(townItem)).join('');
   const offersComponent = new OffersView(data.offers);
   const offersDescription = new DestinationView(data.destination);
-  console.log(data);
   const offerItems = data.offers.offers.length ? offersComponent.getTemplate() : '';
   const description = Object.keys(data.destination).length > 1 ? offersDescription.getTemplate() : '';
 
@@ -99,7 +98,7 @@ const createEventFormTemplate = (data) => {
 </li>`;
 };
 
-export default class EventForm extends AbstractView {
+export default class EventForm extends SmartView {
   constructor(point) {
     super();
     this._data = EventForm.parsePointToData(point);
@@ -116,36 +115,14 @@ export default class EventForm extends AbstractView {
     this._setInnerHandlers();
   }
 
+  reset(point) {
+    this.updateData(
+      EventForm.parsePointToData(point),
+    );
+  }
+
   getTemplate() {
     return createEventFormTemplate(this._data);
-  }
-
-  updateData(update, justDataUpdating) {
-    if (!update) {
-      return;
-    }
-    this._data = Object.assign(
-      {},
-      this._data,
-      update,
-    );
-
-    if (justDataUpdating) {
-      return;
-    }
-    this.updateElement();
-  }
-
-  updateElement() {
-    const prevElement = this.getElement();
-    const parent = prevElement.parentElement;
-    this.removeElement();
-
-    const newElement = this.getElement();
-
-    parent.replaceChild(newElement, prevElement);
-
-    this.restoreHandlers();
   }
 
   restoreHandlers() {
@@ -181,13 +158,13 @@ export default class EventForm extends AbstractView {
         this._data.offers,
         this._data.offers.offers[changedElementIndex].isAdded,
       ),
-    }, true);
+    });
   }
 
   _priceInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      basePrice: Number(evt.target.value) ? Number(evt.target.value) : 0,
+      basePrice: Number(evt.target.value) && Number(evt.target.value) > 0 ? Number(evt.target.value) : 0,
     }, true);
   }
 
@@ -206,7 +183,6 @@ export default class EventForm extends AbstractView {
 
   _townToggleHandler(evt) {
     evt.preventDefault();
-    console.log(evt.target.value);
     if (towns.indexOf(evt.target.value) !== -1) {
       this.updateData({
         destination: destinations.filter((item) => item['name'] === evt.target.value)[0],
@@ -245,7 +221,7 @@ export default class EventForm extends AbstractView {
       {
         isSubmitDisabled: false,
       },
-      );
+    );
   }
 
   static parseDataToPoint(data) {
