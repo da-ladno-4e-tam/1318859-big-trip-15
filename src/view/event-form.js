@@ -26,7 +26,7 @@ const createEventFormTemplate = (data) => {
   const {
     type = '',
     id = 0,
-    basePrice = '0',
+    basePrice = 0,
     dateFrom = dayjs().toDate(),
     dateTo = dayjs().toDate(),
     destination = {},
@@ -40,7 +40,7 @@ const createEventFormTemplate = (data) => {
   const offersDescription = new DestinationView(data.destination);
   console.log(data);
   const offerItems = data.offers.offers.length ? offersComponent.getTemplate() : '';
-  const description = (data.destination.description || data.destination.pictures.length) ? offersDescription.getTemplate() : '';
+  const description = Object.keys(data.destination).length > 1 ? offersDescription.getTemplate() : '';
 
   const formButtonsTemplate = createEventFormButtonsTemplate(id, isSubmitDisabled);
 
@@ -187,26 +187,36 @@ export default class EventForm extends AbstractView {
   _priceInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      basePrice: evt.target.value,
-      isSubmitDisabled: !evt.target.value,
-    }, !!evt.target.value);
+      basePrice: Number(evt.target.value) ? Number(evt.target.value) : 0,
+    }, true);
   }
 
   _typeToggleHandler(evt) {
     evt.preventDefault();
-    if (evt.target.tagName !== 'INPUT') {
-      return;
-    }
     this.updateData({
       type: evt.target.value,
-      offers: offers.filter((item) => item['type'] === evt.target.value)[0],
+      offers: Object.assign(
+        {},
+        this._data.offers,
+        this._data.offers.offers.isAdded = false,
+        offers.filter((item) => item['type'] === evt.target.value)[0],
+      ),
     });
   }
 
   _townToggleHandler(evt) {
-    this.updateData({
-      destination: destinations.filter((item) => item['name'] === evt.target.value)[0],
-    });
+    evt.preventDefault();
+    console.log(evt.target.value);
+    if (towns.indexOf(evt.target.value) !== -1) {
+      this.updateData({
+        destination: destinations.filter((item) => item['name'] === evt.target.value)[0],
+      });
+    } else {
+      this.updateData({
+        destination: {},
+        isSubmitDisabled: true,
+      }, true);
+    }
   }
 
   _formSubmitHandler(evt) {
@@ -230,11 +240,18 @@ export default class EventForm extends AbstractView {
   }
 
   static parsePointToData(point) {
-    return Object.assign({}, point);
+    return Object.assign({},
+      point,
+      {
+        isSubmitDisabled: false,
+      },
+      );
   }
 
   static parseDataToPoint(data) {
     data = Object.assign({}, data);
+
+    delete data.isSubmitDisabled;
 
     return data;
   }
