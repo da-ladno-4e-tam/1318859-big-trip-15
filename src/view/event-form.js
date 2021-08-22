@@ -4,14 +4,14 @@ import {towns, types, offers, destinations} from '../mock/task.js';
 import OffersView from './offers.js';
 import DestinationView from './destination.js';
 
-const createEventFormButtonsTemplate = (id) => (
+const createEventFormButtonsTemplate = (id, isSubmitDisabled) => (
   id
-    ? `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+    ? `<button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled ? 'disabled' : ''}>Save</button>
                   <button class="event__reset-btn" type="reset">Delete</button>
                   <button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>`
-    : `<button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+    : `<button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled ? 'disabled' : ''}>Save</button>
                   <button class="event__reset-btn" type="reset">Cancel</button>`
 );
 
@@ -26,10 +26,11 @@ const createEventFormTemplate = (data) => {
   const {
     type = '',
     id = 0,
-    basePrice = 0,
+    basePrice = '0',
     dateFrom = dayjs().toDate(),
     dateTo = dayjs().toDate(),
     destination = {},
+    isSubmitDisabled,
   } = data;
   const town = destination.name ? destination.name : '';
   const eventTypeItems = types.map((eventType) => createEventTypeItemTemplate(eventType, type === eventType)).join('');
@@ -41,7 +42,7 @@ const createEventFormTemplate = (data) => {
   const offerItems = data.offers.offers.length ? offersComponent.getTemplate() : '';
   const description = (data.destination.description || data.destination.pictures.length) ? offersDescription.getTemplate() : '';
 
-  const formButtonsTemplate = createEventFormButtonsTemplate(id);
+  const formButtonsTemplate = createEventFormButtonsTemplate(id, isSubmitDisabled);
 
   return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
@@ -150,6 +151,7 @@ export default class EventForm extends AbstractView {
   restoreHandlers() {
     this._setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setEditClickHandler(this._callback.editClick);
   }
 
   _setInnerHandlers() {
@@ -171,21 +173,23 @@ export default class EventForm extends AbstractView {
 
   _offerChangeHandler(evt) {
     evt.preventDefault();
-    console.log(evt.target);
+    const changedElementIndex = Number(evt.target.id.toString().slice(-1));
+    this._data.offers.offers[changedElementIndex].isAdded = evt.target.checked;
     this.updateData({
-      offers: this._data.offers.map((item) => {
-        item.forEach((offer) => {
-          offer['isAdded'] = evt.target.checked;
-        });
-      }),
-    });
+      offers: Object.assign(
+        {},
+        this._data.offers,
+        this._data.offers.offers[changedElementIndex].isAdded,
+      ),
+    }, true);
   }
 
   _priceInputHandler(evt) {
     evt.preventDefault();
     this.updateData({
-      price: evt.target.value,
-    }, true);
+      basePrice: evt.target.value,
+      isSubmitDisabled: !evt.target.value,
+    }, !!evt.target.value);
   }
 
   _typeToggleHandler(evt) {
