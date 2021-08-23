@@ -3,6 +3,9 @@ import SmartView from './smart.js';
 import {towns, types, destinations, generateOffersList} from '../mock/task.js';
 import OffersView from './offers.js';
 import DestinationView from './destination.js';
+import flatpickr from 'flatpickr';
+
+// import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createEventFormButtonsTemplate = (id, isSubmitDisabled) => (
   id
@@ -142,7 +145,7 @@ export default class EventForm extends SmartView {
     this.getElement()
       .querySelector('#event-price-1')
       .addEventListener('input', this._priceInputHandler);
-    if (Object.keys(this._data.offers).length) {
+    if (this._data.offers.length) {
       this.getElement()
         .querySelector('.event__available-offers')
         .addEventListener('change', this._offerChangeHandler);
@@ -152,15 +155,13 @@ export default class EventForm extends SmartView {
   _offerChangeHandler(evt) {
     evt.preventDefault();
     const changedElementIndex = Number(evt.target.id.toString().slice(-1));
-    this._data.offers[changedElementIndex].isAdded = evt.target.checked;
     this.updateData({
       offers: Object.assign(
         [],
         this._data.offers,
-        this._data.offers[changedElementIndex].isAdded,
+        this._data.offers[changedElementIndex].isAdded = evt.target.checked,
       ),
-    });
-    // console.log(this._data);
+    }, true);
   }
 
   _priceInputHandler(evt) {
@@ -188,11 +189,6 @@ export default class EventForm extends SmartView {
       this.updateData({
         destination: destinations.find((item) => item['name'] === evt.target.value),
       });
-    } else {
-      this.updateData({
-        destination: {},
-        isSubmitDisabled: true,
-      }, true);
     }
   }
 
@@ -217,18 +213,11 @@ export default class EventForm extends SmartView {
   }
 
   static parsePointToData(point) {
-    return Object.assign({},
-      point,
-      {
-        isSubmitDisabled: false,
-      },
-    );
+    return Object.assign({}, point);
   }
 
   static parseDataToPoint(data) {
     data = Object.assign({}, data);
-
-    delete data.isSubmitDisabled;
 
     return data;
   }
