@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import SmartView from './smart.js';
-import {towns, types, offers, destinations} from '../mock/task.js';
+import {towns, types, destinations, generateOffersList} from '../mock/task.js';
 import OffersView from './offers.js';
 import DestinationView from './destination.js';
 
@@ -38,7 +38,8 @@ const createEventFormTemplate = (data) => {
   const townItems = towns.map((townItem) => townItemTemplate(townItem)).join('');
   const offersComponent = new OffersView(data.offers);
   const offersDescription = new DestinationView(data.destination);
-  const offerItems = data.offers.offers.length ? offersComponent.getTemplate() : '';
+  const offerItems = Object.keys(data.offers).length ? offersComponent.getTemplate() : '';
+  // console.log(data.offers);
   const description = Object.keys(data.destination).length > 1 ? offersDescription.getTemplate() : '';
 
   const formButtonsTemplate = createEventFormButtonsTemplate(id, isSubmitDisabled);
@@ -141,7 +142,7 @@ export default class EventForm extends SmartView {
     this.getElement()
       .querySelector('#event-price-1')
       .addEventListener('input', this._priceInputHandler);
-    if (this._data.offers.offers.length) {
+    if (Object.keys(this._data.offers).length) {
       this.getElement()
         .querySelector('.event__available-offers')
         .addEventListener('change', this._offerChangeHandler);
@@ -151,14 +152,15 @@ export default class EventForm extends SmartView {
   _offerChangeHandler(evt) {
     evt.preventDefault();
     const changedElementIndex = Number(evt.target.id.toString().slice(-1));
-    this._data.offers.offers[changedElementIndex].isAdded = evt.target.checked;
+    this._data.offers[changedElementIndex].isAdded = evt.target.checked;
     this.updateData({
       offers: Object.assign(
-        {},
+        [],
         this._data.offers,
-        this._data.offers.offers[changedElementIndex].isAdded,
+        this._data.offers[changedElementIndex].isAdded,
       ),
     });
+    // console.log(this._data);
   }
 
   _priceInputHandler(evt) {
@@ -173,10 +175,9 @@ export default class EventForm extends SmartView {
     this.updateData({
       type: evt.target.value,
       offers: Object.assign(
-        {},
-        this._data.offers,
-        this._data.offers.offers.isAdded = false,
-        offers.filter((item) => item['type'] === evt.target.value)[0],
+        [],
+        [],
+        generateOffersList(evt.target.value),
       ),
     });
   }
@@ -185,7 +186,7 @@ export default class EventForm extends SmartView {
     evt.preventDefault();
     if (towns.indexOf(evt.target.value) !== -1) {
       this.updateData({
-        destination: destinations.filter((item) => item['name'] === evt.target.value)[0],
+        destination: destinations.find((item) => item['name'] === evt.target.value),
       });
     } else {
       this.updateData({

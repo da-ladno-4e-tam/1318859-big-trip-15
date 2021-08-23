@@ -3,191 +3,6 @@ import {getRandomInteger} from '../utils/common.js';
 
 const POINT_COUNT = 5;
 
-// export const types = ['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'];
-const typesOffers = {
-  'taxi': {
-    type: 'taxi',
-    offers:
-      [
-        {
-          title: 'Upgrade to a business class',
-          price: 190,
-        },
-        {
-          title: 'Choose the radio station',
-          price: 30,
-        },
-        {
-          title: 'Choose temperature',
-          price: 170,
-        },
-        {
-          title: 'Drive quickly, I\'m in a hurry',
-          price: 100,
-        },
-        {
-          title: 'Drive slowly',
-          price: 110,
-        }
-      ],
-  },
-  'bus': {
-    type: 'bus',
-    offers:
-      [
-        {
-          title: 'Infotainment system',
-          price: 50,
-        },
-        {
-          title: 'Order meal',
-          price: 100,
-        },
-        {
-          title: 'Choose seats',
-          price: 190,
-        },
-      ],
-  },
-  'train': {
-    type: 'train',
-    offers:
-      [
-        {
-          title: 'Book a taxi at the arrival point',
-          price: 110,
-        },
-        {
-          title: 'Order a breakfast',
-          price: 80,
-        },
-        {
-          title: 'Wake up at a certain time',
-          price: 140,
-        }
-      ],
-  },
-  'ship': {
-    type: 'ship',
-    offers:
-      [
-        {
-          title: 'Choose meal',
-          price: 130,
-        },
-        {
-          title: 'Choose seats',
-          price: 160,
-        },
-        {
-          title: 'Upgrade to comfort class',
-          price: 170,
-        },
-        {
-          title: 'Upgrade to business class',
-          price: 150,
-        },
-        {
-          title: 'Add luggage',
-          price: 100,
-        },
-        {
-          title: 'Business lounge',
-          price: 40,
-        }
-      ],
-  },
-  'drive': {
-    type: 'drive',
-    offers:
-      [
-        {
-          title: 'Choose comfort class',
-          price: 110,
-        },
-        {
-          title: 'Choose business class',
-          price: 180,
-        }
-      ],
-  },
-  'flight': {
-    type: 'flight',
-    offers:
-      [
-        {
-          title: 'Choose meal',
-          price: 120,
-        },
-        {
-          title: 'Choose seats',
-          price: 90,
-        },
-        {
-          title: 'Upgrade to comfort class',
-          price: 120,
-        },
-        {
-          title: 'Upgrade to business class',
-          price: 120,
-        },
-        {
-          title: 'Add luggage',
-          price: 170,
-        },
-        {
-          title: 'Business lounge',
-          price: 160,
-        }
-      ],
-  },
-  'check-in': {
-    type: 'check-in',
-    offers:
-      [
-        {
-          title: 'Choose the time of check-in',
-          price: 70,
-        },
-        {
-          title: 'Choose the time of check-out',
-          price: 190,
-        },
-        {
-          title: 'Add breakfast',
-          price: 110,
-        },
-        {
-          title: 'Laundry',
-          price: 140,
-        },
-        {
-          title: 'Order a meal from the restaurant',
-          price: 30,
-        }
-      ],
-  },
-  'sightseeing': {
-    type: 'sightseeing',
-    offers:
-      [],
-  },
-  'restaurant': {
-    type: 'restaurant',
-    offers:
-      [
-        {
-          title: 'Choose live music',
-          price: 150,
-        },
-        {
-          title: 'Choose VIP area',
-          price: 70,
-        }
-      ],
-  },
-};
-
 export const offers = [
   {
     "type": "taxi",
@@ -940,7 +755,6 @@ const destinationDescriptions = [
 const generateType = () => types[getRandomInteger(0, types.length - 1)];
 const generateTown = () => towns[getRandomInteger(0, towns.length - 1)];
 const generateBasePrice = () => getRandomInteger(2, 20) * 10;
-const isAddedOffer = () => Boolean(getRandomInteger(0, 1));
 const generateStartDate = () => {
   const maxDaysGap = 5;
   const maxHoursGap = 12;
@@ -966,10 +780,9 @@ const generateDestination = () => (
   }
 );
 
-const generateOffersList = (offerType) => {
-  const typeOffers = typesOffers[offerType];
-  typeOffers.offers.forEach((offer) => offer.isAdded = false);
-
+export const generateOffersList = (offerType) => {
+  const typeOffers = offers.find((item) => item['type'] === offerType).offers;
+  typeOffers.forEach((offer) => offer.isAdded = false);
   return typeOffers;
 };
 let currentId = 0;

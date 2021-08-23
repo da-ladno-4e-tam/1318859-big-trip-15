@@ -26,7 +26,6 @@ export default class Event {
 
   init(point) {
     this._point = point;
-
     const prevEventComponent = this._eventComponent;
     const prevEventFormComponent = this._eventFormComponent;
 
