@@ -41,8 +41,7 @@ const createEventFormTemplate = (data) => {
   const townItems = towns.map((townItem) => townItemTemplate(townItem)).join('');
   const offersComponent = new OffersView(data.offers);
   const offersDescription = new DestinationView(data.destination);
-  const offerItems = Object.keys(data.offers).length ? offersComponent.getTemplate() : '';
-  // console.log(data.offers);
+  const offerItems = data.offers.length ? offersComponent.getTemplate() : '';
   const description = Object.keys(data.destination).length > 1 ? offersDescription.getTemplate() : '';
 
   const formButtonsTemplate = createEventFormButtonsTemplate(id, isSubmitDisabled);
@@ -155,11 +154,12 @@ export default class EventForm extends SmartView {
   _offerChangeHandler(evt) {
     evt.preventDefault();
     const changedElementIndex = Number(evt.target.id.toString().slice(-1));
+    this._data.offers.offers[changedElementIndex].isAdded = evt.target.checked;
     this.updateData({
       offers: Object.assign(
         [],
         this._data.offers,
-        this._data.offers[changedElementIndex].isAdded = evt.target.checked,
+        this._data.offers.offers[changedElementIndex].isAdded,
       ),
     }, true);
   }
