@@ -5,7 +5,7 @@ import OffersView from './offers.js';
 import DestinationView from './destination.js';
 import flatpickr from 'flatpickr';
 
-// import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createEventFormButtonsTemplate = (id, isSubmitDisabled) => (
   id
@@ -104,7 +104,10 @@ const createEventFormTemplate = (data) => {
 export default class EventForm extends SmartView {
   constructor(point) {
     super();
+    // point = JSON.parse(JSON.stringify(point));
     this._data = EventForm.parsePointToData(point);
+    this._dateFromPicker = null;
+    this._dateToPicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._editClickHandler = this._editClickHandler.bind(this);
@@ -114,8 +117,12 @@ export default class EventForm extends SmartView {
     this._townToggleHandler = this._townToggleHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);
     this._offerChangeHandler = this._offerChangeHandler.bind(this);
+    this._dateFromChangeHandler = this._dateFromChangeHandler.bind(this);
+    this._dateToChangeHandler = this._dateToChangeHandler.bind(this);
 
     this._setInnerHandlers();
+    this._setDateFromPicker();
+    this._setDateToPicker();
   }
 
   reset(point) {
@@ -130,8 +137,49 @@ export default class EventForm extends SmartView {
 
   restoreHandlers() {
     this._setInnerHandlers();
+    this._setDateFromPicker();
+    this._setDateToPicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setEditClickHandler(this._callback.editClick);
+  }
+
+  _setDateFromPicker() {
+    if (this._dateFromPicker) {
+      // В случае обновления компонента удаляем вспомогательные DOM-элементы,
+      // которые создает flatpickr при инициализации
+      this._dateFromPicker.destroy();
+      this._dateFromPicker = null;
+    }
+
+    this._dateFromPicker = flatpickr(
+      this.getElement().querySelector('#event-start-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.dateFrom,
+        onChange: this._dateFromChangeHandler, // На событие flatpickr передаём наш колбэк
+      },
+    );
+  }
+
+
+  _setDateToPicker() {
+    if (this._dateToPicker) {
+      // В случае обновления компонента удаляем вспомогательные DOM-элементы,
+      // которые создает flatpickr при инициализации
+      this._dateToPicker.destroy();
+      this._dateToPicker = null;
+    }
+
+    this._dateToPicker = flatpickr(
+      this.getElement().querySelector('#event-end-time-1'),
+      {
+        enableTime: true,
+        dateFormat: 'd/m/y H:i',
+        defaultDate: this._data.dateTo,
+        onChange: this._dateToChangeHandler, // На событие flatpickr передаём наш колбэк
+      },
+    );
   }
 
   _setInnerHandlers() {
@@ -151,17 +199,29 @@ export default class EventForm extends SmartView {
     }
   }
 
+  _dateFromChangeHandler([userDateFrom]) {
+    this.updateData({
+      dateFrom: userDateFrom,
+    }, true);
+  }
+
+  _dateToChangeHandler([userDateTo]) {
+    this.updateData({
+      dateTo: userDateTo,
+    }, true);
+  }
+
   _offerChangeHandler(evt) {
     evt.preventDefault();
-    const changedElementIndex = Number(evt.target.id.toString().slice(-1));
-    this._data.offers.offers[changedElementIndex].isAdded = evt.target.checked;
+    const changedElementIndex = Number(evt.target.dataset.index);
+    // this._data.offers[changedElementIndex].isAdded = evt.target.checked;
     this.updateData({
       offers: Object.assign(
         [],
         this._data.offers,
-        this._data.offers.offers[changedElementIndex].isAdded,
+        this._data.offers[changedElementIndex].isAdded = evt.target.checked,
       ),
-    }, true);
+    });
   }
 
   _priceInputHandler(evt) {
