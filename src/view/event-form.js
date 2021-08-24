@@ -145,8 +145,6 @@ export default class EventForm extends SmartView {
 
   _setDateFromPicker() {
     if (this._dateFromPicker) {
-      // В случае обновления компонента удаляем вспомогательные DOM-элементы,
-      // которые создает flatpickr при инициализации
       this._dateFromPicker.destroy();
       this._dateFromPicker = null;
     }
@@ -157,7 +155,9 @@ export default class EventForm extends SmartView {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
         defaultDate: this._data.dateFrom,
-        onChange: this._dateFromChangeHandler, // На событие flatpickr передаём наш колбэк
+        maxDate: this._data.dateTo,
+        ['time_24hr']: true,
+        onClose: this._dateFromChangeHandler,
       },
     );
   }
@@ -165,8 +165,6 @@ export default class EventForm extends SmartView {
 
   _setDateToPicker() {
     if (this._dateToPicker) {
-      // В случае обновления компонента удаляем вспомогательные DOM-элементы,
-      // которые создает flatpickr при инициализации
       this._dateToPicker.destroy();
       this._dateToPicker = null;
     }
@@ -177,7 +175,9 @@ export default class EventForm extends SmartView {
         enableTime: true,
         dateFormat: 'd/m/y H:i',
         defaultDate: this._data.dateTo,
-        onChange: this._dateToChangeHandler, // На событие flatpickr передаём наш колбэк
+        minDate: this._data.dateFrom,
+        ['time_24hr']: true,
+        onClose: this._dateToChangeHandler,
       },
     );
   }
@@ -202,13 +202,13 @@ export default class EventForm extends SmartView {
   _dateFromChangeHandler([userDateFrom]) {
     this.updateData({
       dateFrom: userDateFrom,
-    }, true);
+    });
   }
 
   _dateToChangeHandler([userDateTo]) {
     this.updateData({
       dateTo: userDateTo,
-    }, true);
+    });
   }
 
   _offerChangeHandler(evt) {
