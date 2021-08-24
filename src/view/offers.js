@@ -7,7 +7,7 @@ const createOffersTemplate = (offers) => {
     const offerPrice = offer.price ? offer.price : 0;
 
     return `<div class="event__offer-selector">
-                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${i}" type="checkbox" name="event-offer-luggage" ${isChecked}>
+                        <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-${i}" data-index=${i} type="checkbox" name="event-offer-luggage" ${isChecked}>
                         <label class="event__offer-label" for="event-offer-luggage-${i}">
                           <span class="event__offer-title">${offerTitle}</span>
                           &plus;&euro;&nbsp;
