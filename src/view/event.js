@@ -31,7 +31,7 @@ const createEventTemplate = (point) => {
                     <span class="event__offer-price">${price}</span>
                   </li>` : '');
 
-  const activeOffers = (offers.offers && offers.offers.length) ? offers.offers.map((offer) => activeOfferTemplate(offer.title, offer.price, offer.isAdded)).join('') : '';
+  const activeOffers = (offers && offers.length) ? offers.map((offer) => activeOfferTemplate(offer.title, offer.price, offer.isAdded)).join('') : '';
 
   return `<li class="trip-events__item">
               <div class="event">

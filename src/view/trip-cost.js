@@ -5,8 +5,8 @@ const createTripCostTemplate = (points) => {
   const offersSum = () => {
     const activeOffers = [];
     points.forEach((point) => {
-      if (point.offers.offers) {
-        point.offers.offers.forEach((offer) => {
+      if (point.offers) {
+        point.offers.forEach((offer) => {
           if (offer.isAdded) {
             activeOffers.push(offer.price);
           }

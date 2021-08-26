@@ -1,7 +1,5 @@
 import EventFormView from '../view/event-form.js';
 import EventView from '../view/event.js';
-import OffersView from '../view/offers.js';
-import DestinationView from '../view/destination.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
 
 const Mode = {
@@ -28,20 +26,11 @@ export default class Event {
 
   init(point) {
     this._point = point;
-
     const prevEventComponent = this._eventComponent;
     const prevEventFormComponent = this._eventFormComponent;
 
     this._eventComponent = new EventView(point);
     this._eventFormComponent = new EventFormView(point);
-    this._formOffersContainer = this._eventFormComponent.getElement().querySelector('.event__details');
-
-    if (this._point.offers.offers.length) {
-      this._renderOffers();
-    }
-    if (this._point.destination.description || this._point.destination.pictures.length) {
-      this._renderDescription();
-    }
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventFormComponent.setFormSubmitHandler(this._handleFormSubmit);
@@ -58,6 +47,7 @@ export default class Event {
 
   resetMode() {
     if (this._mode !== Mode.DEFAULT) {
+      this._eventFormComponent.reset(this._point);
       this._replaceFormToEvent();
     }
   }
@@ -99,6 +89,7 @@ export default class Event {
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this._eventFormComponent.reset(this._point);
       this._replaceFormToEvent();
     }
   }
@@ -109,6 +100,7 @@ export default class Event {
   }
 
   _handleFormEsc() {
+    this._eventFormComponent.reset(this._point);
     this._replaceFormToEvent();
   }
 
@@ -122,13 +114,5 @@ export default class Event {
         },
       ),
     );
-  }
-
-  _renderOffers() {
-    render(this._formOffersContainer, new OffersView(this._point.offers), RenderPosition.BEFOREEND);
-  }
-
-  _renderDescription() {
-    render(this._formOffersContainer, new DestinationView(this._point.destination), RenderPosition.BEFOREEND);
   }
 }
