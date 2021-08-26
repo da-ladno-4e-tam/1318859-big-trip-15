@@ -11,6 +11,7 @@ const createEventTemplate = (point) => {
     destination = {},
     isFavorite,
   } = point;
+  console.log(dateFrom);
   const {name: town = ''} = destination;
   const favoriteActiveClass = isFavorite ? 'event__favorite-btn--active' : '';
   const tripDuration = dayjs(dateTo).diff(dayjs(dateFrom), 'minute');

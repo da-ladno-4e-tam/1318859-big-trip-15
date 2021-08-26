@@ -104,7 +104,6 @@ const createEventFormTemplate = (data) => {
 export default class EventForm extends SmartView {
   constructor(point) {
     super();
-    // point = JSON.parse(JSON.stringify(point));
     this._data = EventForm.parsePointToData(point);
     this._dateFromPicker = null;
     this._dateToPicker = null;
@@ -273,12 +272,12 @@ export default class EventForm extends SmartView {
   }
 
   static parsePointToData(point) {
-    return Object.assign({}, point);
+    return Object.assign({}, JSON.parse(JSON.stringify(point)));
+    // return Object.assign({}, point);
   }
 
   static parseDataToPoint(data) {
-    data = Object.assign({}, data);
-
-    return data;
+    return Object.assign({}, JSON.parse(JSON.stringify(data)));
+    // return Object.assign({}, data);
   }
 }
