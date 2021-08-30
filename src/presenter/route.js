@@ -1,7 +1,7 @@
 import SortView from '../view/sort.js';
 import EventsListView from '../view/events-list.js';
 import NoEventsView from '../view/no-events.js';
-import {render, RenderPosition} from '../utils/render.js';
+import {render, RenderPosition, remove} from '../utils/render.js';
 import EventPresenter from './event.js';
 import {SortType, UpdateType, UserAction} from '../const.js';
 
@@ -10,8 +10,12 @@ export default class Route {
     this._pointsModel = pointsModel;
     this._routeContainer = routeContainer;
     this._eventPresenter = new Map();
+    this._currentSortType = SortType.DEFAULT;
+
+    this._sortComponent = null;
+
     this._eventsListViewComponent = new EventsListView();
-    this._sortComponent = new SortView();
+    // this._sortComponent = new SortView();
     this._noEventsComponent = new NoEventsView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
@@ -50,13 +54,20 @@ export default class Route {
     }
 
     this._currentSortType = sortType;
-    this._clearEventList();
-    this._renderEvents(this._getPoints());
+    this._clearRoute({resetSortType: true});
+    this._renderRoute();
+    /*    this._clearEventList();
+        this._renderEvents(this._getPoints());*/
   }
 
   _renderSort() {
-    render(this._routeContainer, this._sortComponent, RenderPosition.BEFOREEND);
+    if (this._sortComponent !== null) {
+      this._sortComponent = null;
+    }
+
+    this._sortComponent = new SortView(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+    render(this._routeContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
   _renderEvent(point) {
@@ -96,17 +107,27 @@ export default class Route {
   }
 
   _handleModelEvent(updateType, data) {
-    // В зависимости от типа изменений решаем, что делать:
     switch (updateType) {
       case UpdateType.PATCH:
-        // - обновить часть списка (например, когда поменялось описание)
         this._eventPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        // - обновить список (например, когда задача ушла в архив)
+        /*        this._clearHeader({resetSortType: true});
+                this._renderHeader();*/
+        this._eventPresenter.get(data.id).init(data);
+        break;
+      case UpdateType.MIDDLE:
+        /*        this._clearHeader({resetSortType: true});
+                this._renderHeader();*/
+        // фильтры
+        this._eventPresenter.get(data.id).init(data);
         break;
       case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
+        /*        this._clearHeader({resetSortType: true});
+                this._renderHeader();*/
+        // фильтры
+        this._clearRoute({resetSortType: true});
+        this._renderRoute();
         break;
     }
   }
@@ -115,8 +136,24 @@ export default class Route {
     this._eventPresenter.forEach((presenter) => presenter.resetMode());
   }
 
+  _clearRoute({resetSortType = false} = {}) {
+
+    this._eventPresenter.forEach((presenter) => presenter.destroy());
+    this._eventPresenter.clear();
+
+    remove(this._sortComponent);
+    remove(this._noEventsComponent);
+
+    if (resetSortType) {
+      this._currentSortType = SortType.DEFAULT;
+    }
+  }
+
   _renderRoute() {
-    if (this._getPoints().length === 0) {
+    const points = this._getPoints();
+    const pointCount = points.length;
+
+    if (pointCount === 0) {
       this._renderNoEvents();
     } else {
       this._renderSort();
