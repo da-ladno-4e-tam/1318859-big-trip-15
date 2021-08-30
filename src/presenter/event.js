@@ -1,6 +1,7 @@
 import EventFormView from '../view/event-form.js';
 import EventView from '../view/event.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -95,7 +96,10 @@ export default class Event {
   }
 
   _handleFormSubmit(point) {
-    this._changeData(point);
+    this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      point);
     this._replaceFormToEvent();
   }
 
@@ -106,6 +110,8 @@ export default class Event {
 
   _handleFavoriteClick() {
     this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this._point,
