@@ -272,12 +272,16 @@ export default class EventForm extends SmartView {
   }
 
   static parsePointToData(point) {
-    return Object.assign({}, JSON.parse(JSON.stringify(point)));
-    // return Object.assign({}, point);
+    const data = Object.assign({}, JSON.parse(JSON.stringify(point)));
+    data.dateFrom = dayjs(data.dateFrom).toDate();
+    data.dateTo = dayjs(data.dateTo).toDate();
+    return data;
   }
 
   static parseDataToPoint(data) {
-    return Object.assign({}, JSON.parse(JSON.stringify(data)));
-    // return Object.assign({}, data);
+    const point = Object.assign({}, JSON.parse(JSON.stringify(data)));
+    point.dateFrom = dayjs(point.dateFrom).toDate();
+    point.dateTo = dayjs(point.dateTo).toDate();
+    return point;
   }
 }
