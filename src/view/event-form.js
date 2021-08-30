@@ -110,6 +110,7 @@ export default class EventForm extends SmartView {
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._editClickHandler = this._editClickHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
 
 
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
@@ -122,6 +123,22 @@ export default class EventForm extends SmartView {
     this._setInnerHandlers();
     this._setDateFromPicker();
     this._setDateToPicker();
+  }
+
+  // Перегружаем метод родителя removeElement,
+  // чтобы при удалении удалялся более ненужный календарь
+  removeElement() {
+    super.removeElement();
+
+    if (this._dateFromPicker) {
+      this._dateFromPicker.destroy();
+      this._dateFromPicker = null;
+    }
+
+    if (this._dateToPicker) {
+      this._dateToPicker.destroy();
+      this._dateToPicker = null;
+    }
   }
 
   reset(point) {
@@ -140,6 +157,7 @@ export default class EventForm extends SmartView {
     this._setDateToPicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setEditClickHandler(this._callback.editClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   _setDateFromPicker() {
@@ -269,6 +287,16 @@ export default class EventForm extends SmartView {
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
     this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EventForm.parseDataToPoint(this._data));
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 
   static parsePointToData(point) {

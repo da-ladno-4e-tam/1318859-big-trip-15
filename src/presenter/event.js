@@ -22,6 +22,7 @@ export default class Event {
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleFormEsc = this._handleFormEsc.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
   }
 
@@ -37,6 +38,7 @@ export default class Event {
     this._eventFormComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventFormComponent.setEditClickHandler(this._handleFormEsc);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._eventFormComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     this._reinit(prevEventComponent, prevEventFormComponent);
   }
@@ -95,11 +97,17 @@ export default class Event {
     }
   }
 
-  _handleFormSubmit(point) {
+  _handleFormSubmit(update) {
+    // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
+    // а значит требуют перерисовки списка - если таких нет, это MINOR-обновление
+    const isMiddleUpdate =
+      this._point.dateFrom !== update.dateFrom ||
+      this._point.dateTo !== update.dateTo;
+
     this._changeData(
       UserAction.UPDATE_POINT,
-      UpdateType.MAJOR,
-      point);
+      isMiddleUpdate ? UpdateType.MIDDLE : UpdateType.MINOR,
+      update);
     this._replaceFormToEvent();
   }
 
@@ -119,6 +127,14 @@ export default class Event {
           isFavorite: !this._point.isFavorite,
         },
       ),
+    );
+  }
+
+  _handleDeleteClick(point) {
+    this._changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MAJOR,
+      point,
     );
   }
 }

@@ -15,7 +15,6 @@ export default class Route {
     this._sortComponent = null;
 
     this._eventsListViewComponent = new EventsListView();
-    // this._sortComponent = new SortView();
     this._noEventsComponent = new NoEventsView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
@@ -56,8 +55,6 @@ export default class Route {
     this._currentSortType = sortType;
     this._clearRoute({resetSortType: true});
     this._renderRoute();
-    /*    this._clearEventList();
-        this._renderEvents(this._getPoints());*/
   }
 
   _renderSort() {
@@ -85,11 +82,6 @@ export default class Route {
 
   _renderNoEvents() {
     render(this._routeContainer, this._noEventsComponent, RenderPosition.BEFOREEND);
-  }
-
-  _clearEventList() {
-    this._eventPresenter.forEach((presenter) => presenter.destroy());
-    this._eventPresenter.clear();
   }
 
   _handleViewAction(actionType, updateType, update) {
