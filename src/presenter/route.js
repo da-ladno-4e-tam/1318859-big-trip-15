@@ -1,7 +1,6 @@
 import SortView from '../view/sort.js';
 import EventsListView from '../view/events-list.js';
 import NoEventsView from '../view/no-events.js';
-import {updateItem} from '../utils/common.js';
 import {render, RenderPosition} from '../utils/render.js';
 import EventPresenter from './event.js';
 import {SortType} from '../const.js';
@@ -20,30 +19,26 @@ export default class Route {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
-  init(points) {
-    this._points = points.slice();
+  init() {
+
     this._renderRoute();
   }
 
   _getPoints() {
-    return this._pointsModel.getPoints();
-  }
-
-  _sortEvents(sortType) {
-    switch (sortType) {
+    switch (this._currentSortType) {
       case SortType.DEFAULT:
-        this._points.sort((a, b) => a.dateFrom.getTime() - b.dateFrom.getTime());
+        this._pointsModel.getPoints().slice().sort((a, b) => a.dateFrom.getTime() - b.dateFrom.getTime());
         break;
       case SortType.TIME:
-        this._points.sort((a, b) => (a.dateFrom.getTime() - a.dateTo.getTime()) - (b.dateFrom.getTime() - b.dateTo.getTime()));
+        this._pointsModel.getPoints().slice().sort((a, b) => (a.dateFrom.getTime() - a.dateTo.getTime()) - (b.dateFrom.getTime() - b.dateTo.getTime()));
         break;
       case SortType.PRICE:
-        this._points.sort((a, b) => b.basePrice - a.basePrice);
+        this._pointsModel.getPoints().slice().sort((a, b) => b.basePrice - a.basePrice);
         break;
       default:
     }
 
-    this._currentSortType = sortType;
+    return this._pointsModel.getPoints();
   }
 
   _handleSortTypeChange(sortType) {
@@ -51,9 +46,9 @@ export default class Route {
       return;
     }
 
-    this._sortEvents(sortType);
+    this._currentSortType = sortType;
     this._clearEventList();
-    this._renderEvents();
+    this._renderEvents(this._getPoints());
   }
 
   _renderSort() {
@@ -67,10 +62,10 @@ export default class Route {
     this._eventPresenter.set(point.id, eventPresenter);
   }
 
-  _renderEvents() {
+  _renderEvents(points) {
     render(this._routeContainer, this._eventsListViewComponent, RenderPosition.BEFOREEND);
-    for (let i = 0; i < this._points.length; i++) {
-      this._renderEvent(this._points[i]);
+    for (let i = 0; i < points.length; i++) {
+      this._renderEvent(points[i]);
     }
   }
 
@@ -84,7 +79,7 @@ export default class Route {
   }
 
   _handleEventChange(updatedEvent) {
-    this._points = updateItem(this._points, updatedEvent);
+    // Здесь будем вызывать обновление модели
     this._eventPresenter.get(updatedEvent.id).init(updatedEvent);
   }
 
@@ -93,11 +88,11 @@ export default class Route {
   }
 
   _renderRoute() {
-    if (this._points.length === 0) {
+    if (this._getPoints().length === 0) {
       this._renderNoEvents();
     } else {
       this._renderSort();
-      this._renderEvents();
+      this._renderEvents(this._getPoints());
     }
   }
 }

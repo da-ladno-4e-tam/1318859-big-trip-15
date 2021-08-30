@@ -42,4 +42,4 @@ render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.
 
 const routePresenter = new RoutePresenter(mainContentContainer, pointsModel);
 
-routePresenter.init(points);
+routePresenter.init();
