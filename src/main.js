@@ -7,6 +7,7 @@ import TripTitleView from './view/trip-title.js';
 import TripDatesView from './view/trip-dates.js';
 import TripCostView from './view/trip-cost.js';
 import RoutePresenter from './presenter/route.js';
+import PointsModel from './model/points.js';
 
 import {getData} from './mock/task.js';
 import {render, RenderPosition} from './utils/render.js';
@@ -16,6 +17,9 @@ const points = getData();
 const towns = points.map((point) => point.destination.name);
 const startDates = points.map((point) => point.dateFrom);
 const finishDates = points.map((point) => point.dateTo);
+
+const pointsModel = new PointsModel();
+pointsModel.setPoints(points);
 
 const headerElement = document.querySelector('.page-header');
 const mainElement = document.querySelector('.page-main');
@@ -36,6 +40,6 @@ render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
 render(tripInfoMain, new TripTitleView(towns), RenderPosition.BEFOREEND);
 render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.BEFOREEND);
 
-const routePresenter = new RoutePresenter(mainContentContainer);
+const routePresenter = new RoutePresenter(mainContentContainer, pointsModel);
 
 routePresenter.init(points);

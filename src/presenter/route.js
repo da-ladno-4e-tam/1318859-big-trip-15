@@ -7,7 +7,8 @@ import EventPresenter from './event.js';
 import {SortType} from '../const.js';
 
 export default class Route {
-  constructor(routeContainer) {
+  constructor(routeContainer, pointsModel) {
+    this._pointsModel = pointsModel;
     this._routeContainer = routeContainer;
     this._eventPresenter = new Map();
     this._eventsListViewComponent = new EventsListView();
@@ -22,6 +23,10 @@ export default class Route {
   init(points) {
     this._points = points.slice();
     this._renderRoute();
+  }
+
+  _getPoints() {
+    return this._pointsModel.getPoints();
   }
 
   _sortEvents(sortType) {
