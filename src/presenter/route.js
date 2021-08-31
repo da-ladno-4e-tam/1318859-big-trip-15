@@ -3,7 +3,7 @@ import EventsListView from '../view/events-list.js';
 import NoEventsView from '../view/no-events.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import EventPresenter from './event.js';
-import {SortType, UpdateType, UserAction} from '../const.js';
+import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {filter} from '../utils/filter.js';
 
 export default class Route {
@@ -13,11 +13,13 @@ export default class Route {
     this._routeContainer = routeContainer;
     this._eventPresenter = new Map();
     this._currentSortType = SortType.DEFAULT;
+    this._filterType = FilterType.EVERYTHING;
 
     this._sortComponent = null;
+    this._noEventsComponent = null;
 
     this._eventsListViewComponent = new EventsListView();
-    this._noEventsComponent = new NoEventsView();
+    // this._noEventsComponent = new NoEventsView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -29,14 +31,15 @@ export default class Route {
   }
 
   init() {
-
     this._renderRoute();
   }
 
   _getPoints() {
-    const filterType = this._filterModel.getFilter();
+    // const filterType = this._filterModel.getFilter();
+    this._filterType = this._filterModel.getFilter();
     const points = this._pointsModel.getPoints();
-    const filteredPoints = filter[filterType](points);
+    // const filteredPoints = filter[filterType](points);
+    const filteredPoints = filter[this._filterType](points);
     switch (this._currentSortType) {
       case SortType.DEFAULT:
         return filteredPoints.sort((a, b) => a.dateFrom.getTime() - b.dateFrom.getTime());
@@ -55,7 +58,7 @@ export default class Route {
     }
 
     this._currentSortType = sortType;
-    this._clearRoute({resetSortType: true});
+    this._clearRoute();
     this._renderRoute();
   }
 
@@ -83,6 +86,7 @@ export default class Route {
   }
 
   _renderNoEvents() {
+    this._noEventsComponent = new NoEventsView(this._filterType);
     render(this._routeContainer, this._noEventsComponent, RenderPosition.BEFOREEND);
   }
 
@@ -136,7 +140,11 @@ export default class Route {
     this._eventPresenter.clear();
 
     remove(this._sortComponent);
-    remove(this._noEventsComponent);
+    // remove(this._noEventsComponent);
+
+    if (this._noEventsComponent) {
+      remove(this._noEventsComponent);
+    }
 
     if (resetSortType) {
       this._currentSortType = SortType.DEFAULT;
