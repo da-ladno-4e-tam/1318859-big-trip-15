@@ -4,10 +4,12 @@ import NoEventsView from '../view/no-events.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import EventPresenter from './event.js';
 import {SortType, UpdateType, UserAction} from '../const.js';
+import {filter} from '../utils/filter.js';
 
 export default class Route {
-  constructor(routeContainer, pointsModel) {
+  constructor(routeContainer, pointsModel, filterModel) {
     this._pointsModel = pointsModel;
+    this._filterModel = filterModel;
     this._routeContainer = routeContainer;
     this._eventPresenter = new Map();
     this._currentSortType = SortType.DEFAULT;
@@ -23,6 +25,7 @@ export default class Route {
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
     this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
   }
 
   init() {
@@ -31,20 +34,19 @@ export default class Route {
   }
 
   _getPoints() {
+    const filterType = this._filterModel.getFilter();
+    const points = this._pointsModel.getPoints();
+    const filteredPoints = filter[filterType](points);
     switch (this._currentSortType) {
       case SortType.DEFAULT:
-        this._pointsModel.getPoints().slice().sort((a, b) => a.dateFrom.getTime() - b.dateFrom.getTime());
-        break;
+        return filteredPoints.sort((a, b) => a.dateFrom.getTime() - b.dateFrom.getTime());
       case SortType.TIME:
-        this._pointsModel.getPoints().slice().sort((a, b) => (a.dateFrom.getTime() - a.dateTo.getTime()) - (b.dateFrom.getTime() - b.dateTo.getTime()));
-        break;
+        return filteredPoints.sort((a, b) => (a.dateFrom.getTime() - a.dateTo.getTime()) - (b.dateFrom.getTime() - b.dateTo.getTime()));
       case SortType.PRICE:
-        this._pointsModel.getPoints().slice().sort((a, b) => b.basePrice - a.basePrice);
-        break;
-      default:
+        return filteredPoints.sort((a, b) => b.basePrice - a.basePrice);
     }
 
-    return this._pointsModel.getPoints();
+    return filteredPoints;
   }
 
   _handleSortTypeChange(sortType) {

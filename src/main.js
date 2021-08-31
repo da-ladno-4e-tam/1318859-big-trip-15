@@ -41,7 +41,7 @@ render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
 render(tripInfoMain, new TripTitleView(towns), RenderPosition.BEFOREEND);
 render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.BEFOREEND);
 
-const routePresenter = new RoutePresenter(mainContentContainer, pointsModel);
+const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(filtersContainer, filterModel, pointsModel);
 
 filterPresenter.init();
