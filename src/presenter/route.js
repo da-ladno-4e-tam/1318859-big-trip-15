@@ -3,6 +3,7 @@ import EventsListView from '../view/events-list.js';
 import NoEventsView from '../view/no-events.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import EventPresenter from './event.js';
+import EventNewPresenter from './event-new.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {filter} from '../utils/filter.js';
 
@@ -28,10 +29,22 @@ export default class Route {
 
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
+
+    this._eventNewPresenter = new EventNewPresenter(this._eventsListViewComponent, this._handleViewAction);
   }
 
   init() {
     this._renderRoute();
+  }
+
+  createPoint() {
+    console.log('111');
+    this._currentSortType = SortType.DEFAULT;
+    console.log('111');
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    console.log('111');
+    this._eventNewPresenter.init();
+    console.log('111');
   }
 
   _getPoints() {
@@ -131,11 +144,13 @@ export default class Route {
   }
 
   _handleModeChange() {
+    this._eventNewPresenter.destroy();
     this._eventPresenter.forEach((presenter) => presenter.resetMode());
   }
 
   _clearRoute({resetSortType = false} = {}) {
 
+    this._eventNewPresenter.destroy();
     this._eventPresenter.forEach((presenter) => presenter.destroy());
     this._eventPresenter.clear();
 

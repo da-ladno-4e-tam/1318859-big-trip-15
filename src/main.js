@@ -14,6 +14,7 @@ import {getData} from './mock/task.js';
 import {render, RenderPosition} from './utils/render.js';
 
 const points = getData();
+export const ids = points.map((point) => point.id);
 const towns = points.map((point) => point.destination.name);
 const startDates = points.map((point) => point.dateFrom);
 const finishDates = points.map((point) => point.dateTo);
@@ -46,3 +47,8 @@ const filterPresenter = new FilterPresenter(filtersContainer, filterModel, point
 
 filterPresenter.init();
 routePresenter.init();
+
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  routePresenter.createPoint();
+});

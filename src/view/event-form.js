@@ -6,6 +6,17 @@ import DestinationView from './destination.js';
 import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+import {getRandomInteger} from "../utils/common";
+
+const NEW_POINT = {
+  type: 'bus',
+  basePrice: 0,
+  dateFrom: dayjs().toDate(),
+  dateTo: dayjs().toDate(),
+  offers: generateOffersList('bus'),
+  destination: {},
+  isFavorite: false,
+};
 
 const createEventFormButtonsTemplate = (id, isSubmitDisabled) => (
   id
@@ -102,7 +113,8 @@ const createEventFormTemplate = (data) => {
 };
 
 export default class EventForm extends SmartView {
-  constructor(point) {
+  constructor(point = NEW_POINT) {
+    console.log(point);
     super();
     this._data = EventForm.parsePointToData(point);
     this._dateFromPicker = null;
@@ -286,7 +298,9 @@ export default class EventForm extends SmartView {
 
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
+    if (this._data.id) {
+      this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
+    }
   }
 
   _formDeleteClickHandler(evt) {
