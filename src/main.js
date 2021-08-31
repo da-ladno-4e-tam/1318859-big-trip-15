@@ -9,6 +9,7 @@ import RoutePresenter from './presenter/route.js';
 import FilterPresenter from './presenter/filter.js';
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
+import {MenuItem} from './const.js';
 
 import {getData} from './mock/task.js';
 import {render, RenderPosition} from './utils/render.js';
@@ -31,9 +32,11 @@ const menuContainer = headerElement.querySelector('.trip-controls__navigation');
 const filtersContainer = headerElement.querySelector('.trip-controls__filters');
 const mainContentContainer = mainElement.querySelector('.trip-events');
 
+const menuComponent = new MenuView();
+
 const newEventButton = new NewEventButtonView();
 render(tripInfoContainer, newEventButton, RenderPosition.BEFOREEND);
-render(menuContainer, new MenuView(), RenderPosition.BEFOREEND);
+render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
 const tripInfoSection = new TripInfoSectionView();
 render(tripInfoContainer, tripInfoSection, RenderPosition.AFTERBEGIN);
 render(tripInfoSection, new TripCostView(points), RenderPosition.BEFOREEND);
@@ -44,6 +47,23 @@ render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.
 
 const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(filtersContainer, filterModel, pointsModel);
+
+const handleSiteMenuClick = (menuItem) => {
+  switch (menuItem) {
+    case MenuItem.POINTS:
+      // Показать доску
+      // Скрыть статистику
+      // Активировать кнопку создания точки
+      break;
+    case MenuItem.STATISTICS:
+      // Скрыть доску
+      // Показать статистику
+      // Задизаблить кнопку создания точки
+      break;
+  }
+};
+
+menuComponent.setMenuClickHandler(handleSiteMenuClick);
 
 filterPresenter.init();
 routePresenter.init();
