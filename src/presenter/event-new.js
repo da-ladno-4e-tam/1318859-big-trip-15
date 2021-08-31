@@ -21,9 +21,7 @@ export default class EventNew {
       return;
     }
 
-    console.log('222');
     this._eventFormComponent = new EventFormView();
-    console.log('222');
     this._eventFormComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventFormComponent.setDeleteClickHandler(this._handleDeleteClick);
 

@@ -6,7 +6,6 @@ import DestinationView from './destination.js';
 import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
-import {getRandomInteger} from "../utils/common";
 
 const NEW_POINT = {
   type: 'bus',
@@ -114,7 +113,6 @@ const createEventFormTemplate = (data) => {
 
 export default class EventForm extends SmartView {
   constructor(point = NEW_POINT) {
-    console.log(point);
     super();
     this._data = EventForm.parsePointToData(point);
     this._dateFromPicker = null;

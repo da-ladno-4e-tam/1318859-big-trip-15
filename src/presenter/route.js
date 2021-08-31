@@ -38,13 +38,9 @@ export default class Route {
   }
 
   createPoint() {
-    console.log('111');
     this._currentSortType = SortType.DEFAULT;
-    console.log('111');
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    console.log('111');
     this._eventNewPresenter.init();
-    console.log('111');
   }
 
   _getPoints() {
