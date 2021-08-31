@@ -8,6 +8,7 @@ import TripDatesView from './view/trip-dates.js';
 import TripCostView from './view/trip-cost.js';
 import RoutePresenter from './presenter/route.js';
 import PointsModel from './model/points.js';
+import FilterModel from './model/filter.js';
 
 import {getData} from './mock/task.js';
 import {render, RenderPosition} from './utils/render.js';
@@ -20,6 +21,8 @@ const finishDates = points.map((point) => point.dateTo);
 
 const pointsModel = new PointsModel();
 pointsModel.setPoints(points);
+
+const filterModel = new FilterModel();
 
 const headerElement = document.querySelector('.page-header');
 const mainElement = document.querySelector('.page-main');
