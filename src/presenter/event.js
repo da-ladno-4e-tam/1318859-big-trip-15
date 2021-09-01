@@ -91,7 +91,6 @@ export default class Event {
 
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
       this._eventFormComponent.reset(this._point);
       this._replaceFormToEvent();
     }
@@ -100,13 +99,12 @@ export default class Event {
   _handleFormSubmit(update) {
     // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
     // а значит требуют перерисовки списка - если таких нет, это MINOR-обновление
-    const isMiddleUpdate =
+    const isMajorUpdate =
       this._point.dateFrom !== update.dateFrom ||
       this._point.dateTo !== update.dateTo;
-
     this._changeData(
       UserAction.UPDATE_POINT,
-      isMiddleUpdate ? UpdateType.MIDDLE : UpdateType.MINOR,
+      isMajorUpdate ? UpdateType.MAJOR : UpdateType.MINOR,
       update);
     this._replaceFormToEvent();
   }

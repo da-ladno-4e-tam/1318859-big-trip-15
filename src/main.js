@@ -15,7 +15,6 @@ import {getData} from './mock/task.js';
 import {render, RenderPosition} from './utils/render.js';
 
 const points = getData();
-export const ids = points.map((point) => point.id);
 const towns = points.map((point) => point.destination.name);
 const startDates = points.map((point) => point.dateFrom);
 const finishDates = points.map((point) => point.dateTo);
@@ -45,7 +44,7 @@ render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
 render(tripInfoMain, new TripTitleView(towns), RenderPosition.BEFOREEND);
 render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.BEFOREEND);
 
-const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, filterModel);
+export const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(filtersContainer, filterModel, pointsModel);
 
 const handleSiteMenuClick = (menuItem) => {
@@ -67,8 +66,3 @@ menuComponent.setMenuClickHandler(handleSiteMenuClick);
 
 filterPresenter.init();
 routePresenter.init();
-
-document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
-  evt.preventDefault();
-  routePresenter.createPoint();
-});

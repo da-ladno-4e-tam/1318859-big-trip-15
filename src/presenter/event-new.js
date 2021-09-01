@@ -1,13 +1,12 @@
 import EventFormView from '../view/event-form.js';
+import {nanoid} from 'nanoid';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
-import {ids} from '../main.js';
 
-export default class EventNew {
+export default class NewEventForm {
   constructor(eventsContainer, changeData) {
     this._eventsContainer = eventsContainer;
     this._changeData = changeData;
-    this._currentId = Math.max(...ids);
 
     this._eventFormComponent = null;
 
@@ -45,9 +44,7 @@ export default class EventNew {
     this._changeData(
       UserAction.ADD_POINT,
       UpdateType.MAJOR,
-      // Пока у нас нет сервера, который бы после сохранения
-      // выдывал честный id задачи, нам нужно позаботиться об этом самим
-      Object.assign({id: ++this._currentId}, point),
+      Object.assign({id: nanoid()}, point),
     );
     this.destroy();
   }
@@ -58,7 +55,6 @@ export default class EventNew {
 
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
       this.destroy();
     }
   }

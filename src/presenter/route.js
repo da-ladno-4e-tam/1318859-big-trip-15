@@ -3,9 +3,10 @@ import EventsListView from '../view/events-list.js';
 import NoEventsView from '../view/no-events.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import EventPresenter from './event.js';
-import EventNewPresenter from './event-new.js';
+import NewEventFormPresenter from './event-new.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {filter} from '../utils/filter.js';
+import NewEventButtonView from '../view/new-event-button.js';
 
 export default class Route {
   constructor(routeContainer, pointsModel, filterModel) {
@@ -20,7 +21,7 @@ export default class Route {
     this._noEventsComponent = null;
 
     this._eventsListViewComponent = new EventsListView();
-    // this._noEventsComponent = new NoEventsView();
+    this._newEventButtonComponent = new NewEventButtonView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -30,24 +31,23 @@ export default class Route {
     this._pointsModel.addObserver(this._handleModelEvent);
     this._filterModel.addObserver(this._handleModelEvent);
 
-    this._eventNewPresenter = new EventNewPresenter(this._eventsListViewComponent, this._handleViewAction);
+    this._newEventFormPresenter = new NewEventFormPresenter(this._eventsListViewComponent, this._handleViewAction);
   }
 
   init() {
     this._renderRoute();
+    this._newEventButtonComponent.setNewPointClickHandler();
   }
 
   createPoint() {
     this._currentSortType = SortType.DEFAULT;
     this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
-    this._eventNewPresenter.init();
+    this._newEventFormPresenter.init();
   }
 
   _getPoints() {
-    // const filterType = this._filterModel.getFilter();
     this._filterType = this._filterModel.getFilter();
     const points = this._pointsModel.getPoints();
-    // const filteredPoints = filter[filterType](points);
     const filteredPoints = filter[this._filterType](points);
     switch (this._currentSortType) {
       case SortType.DEFAULT:
@@ -123,12 +123,6 @@ export default class Route {
                 this._renderHeader();*/
         this._eventPresenter.get(data.id).init(data);
         break;
-      case UpdateType.MIDDLE:
-        /*        this._clearHeader({resetSortType: true});
-                this._renderHeader();*/
-        // фильтры
-        this._eventPresenter.get(data.id).init(data);
-        break;
       case UpdateType.MAJOR:
         /*        this._clearHeader({resetSortType: true});
                 this._renderHeader();*/
@@ -140,18 +134,17 @@ export default class Route {
   }
 
   _handleModeChange() {
-    this._eventNewPresenter.destroy();
+    this._newEventFormPresenter.destroy();
     this._eventPresenter.forEach((presenter) => presenter.resetMode());
   }
 
   _clearRoute({resetSortType = false} = {}) {
 
-    this._eventNewPresenter.destroy();
+    this._newEventFormPresenter.destroy();
     this._eventPresenter.forEach((presenter) => presenter.destroy());
     this._eventPresenter.clear();
 
     remove(this._sortComponent);
-    // remove(this._noEventsComponent);
 
     if (this._noEventsComponent) {
       remove(this._noEventsComponent);
