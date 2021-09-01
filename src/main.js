@@ -5,6 +5,7 @@ import TripInfoMainView from './view/trip-info-main.js';
 import TripTitleView from './view/trip-title.js';
 import TripDatesView from './view/trip-dates.js';
 import TripCostView from './view/trip-cost.js';
+import StatisticsView from './view/statistics.js';
 import RoutePresenter from './presenter/route.js';
 import FilterPresenter from './presenter/filter.js';
 import PointsModel from './model/points.js';
@@ -52,11 +53,13 @@ const handleSiteMenuClick = (menuItem) => {
     case MenuItem.POINTS:
       routePresenter.init();
       // Скрыть статистику
+      menuComponent.setMenuItem(MenuItem.POINTS);
       document.querySelector('.trip-main__event-add-btn').disabled = false;
       break;
     case MenuItem.STATISTICS:
       routePresenter.destroy();
       // Показать статистику
+      menuComponent.setMenuItem(MenuItem.STATISTICS);
       document.querySelector('.trip-main__event-add-btn').disabled = true;
       break;
   }
@@ -65,4 +68,7 @@ const handleSiteMenuClick = (menuItem) => {
 menuComponent.setMenuClickHandler(handleSiteMenuClick);
 
 filterPresenter.init();
-routePresenter.init();
+// Для удобства отладки скроем доску
+// routePresenter.init();
+// и отобразим сразу статистику
+render(mainContentContainer, new StatisticsView(pointsModel.getPoints()), RenderPosition.BEFOREEND);
