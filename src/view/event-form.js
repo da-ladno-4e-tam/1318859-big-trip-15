@@ -1,9 +1,11 @@
+import he from 'he';
 import dayjs from 'dayjs';
 import SmartView from './smart.js';
 import {towns, types, destinations, generateOffersList} from '../mock/task.js';
 import OffersView from './offers.js';
 import DestinationView from './destination.js';
 import flatpickr from 'flatpickr';
+import PointsModel from '../model/points.js';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
@@ -78,7 +80,7 @@ const createEventFormTemplate = (data) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${town}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(town)}" list="destination-list-1">
                     <datalist id="destination-list-1">
                       ${townItems}
                     </datalist>
@@ -97,7 +99,7 @@ const createEventFormTemplate = (data) => {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" step="1" name="event-price" value="${basePrice}">
                   </div>
 
                   ${formButtonsTemplate}
@@ -114,7 +116,8 @@ const createEventFormTemplate = (data) => {
 export default class EventForm extends SmartView {
   constructor(point = NEW_POINT) {
     super();
-    this._data = EventForm.parsePointToData(point);
+    this._pointsModel = new PointsModel();
+    this._data = this._pointsModel.parsePointToData(point);
     this._dateFromPicker = null;
     this._dateToPicker = null;
 
@@ -153,7 +156,7 @@ export default class EventForm extends SmartView {
 
   reset(point) {
     this.updateData(
-      EventForm.parsePointToData(point),
+      this._pointsModel.parsePointToData(point),
     );
   }
 
@@ -215,7 +218,7 @@ export default class EventForm extends SmartView {
       .addEventListener('change', this._typeToggleHandler);
     this.getElement()
       .querySelector('#event-destination-1')
-      .addEventListener('change', this._townToggleHandler);
+      .addEventListener('input', this._townToggleHandler);
     this.getElement()
       .querySelector('#event-price-1')
       .addEventListener('input', this._priceInputHandler);
@@ -273,15 +276,18 @@ export default class EventForm extends SmartView {
   _townToggleHandler(evt) {
     evt.preventDefault();
     if (towns.indexOf(evt.target.value) !== -1) {
+      this.getElement().querySelector('.event__save-btn').disabled = false;
       this.updateData({
         destination: destinations.find((item) => item['name'] === evt.target.value),
       });
+    } else {
+      this.getElement().querySelector('.event__save-btn').disabled = true;
     }
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(EventForm.parseDataToPoint(this._data));
+    this._callback.formSubmit(this._pointsModel.parseDataToPoint(this._data));
   }
 
   _editClickHandler(evt) {
@@ -303,7 +309,7 @@ export default class EventForm extends SmartView {
 
   _formDeleteClickHandler(evt) {
     evt.preventDefault();
-    this._callback.deleteClick(EventForm.parseDataToPoint(this._data));
+    this._callback.deleteClick(this._pointsModel.parseDataToPoint(this._data));
   }
 
   setDeleteClickHandler(callback) {
@@ -311,7 +317,7 @@ export default class EventForm extends SmartView {
     this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 
-  static parsePointToData(point) {
+/*  static parsePointToData(point) {
     const data = Object.assign({}, JSON.parse(JSON.stringify(point)));
     data.dateFrom = dayjs(data.dateFrom).toDate();
     data.dateTo = dayjs(data.dateTo).toDate();
@@ -323,5 +329,5 @@ export default class EventForm extends SmartView {
     point.dateFrom = dayjs(point.dateFrom).toDate();
     point.dateTo = dayjs(point.dateTo).toDate();
     return point;
-  }
+  }*/
 }

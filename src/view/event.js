@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
+import he from 'he';
 
 const createEventTemplate = (point) => {
   const {
@@ -39,7 +40,7 @@ const createEventTemplate = (point) => {
                 <div class="event__type">
                   <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
                 </div>
-                <h3 class="event__title">${type} ${town}</h3>
+                <h3 class="event__title">${type} ${he.encode(town)}</h3>
                 <div class="event__schedule">
                   <p class="event__time">
                     <time class="event__start-time" datetime="${dayjs(dateFrom).format('YYYY-MM-DDTHH:mm')}">${dayjs(dateFrom).format('HH:mm')}</time>

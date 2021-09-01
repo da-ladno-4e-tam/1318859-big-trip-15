@@ -1,4 +1,5 @@
 import AbstractObserver from '../utils/abstract-observer.js';
+import dayjs from 'dayjs';
 
 export default class Points extends AbstractObserver {
   constructor() {
@@ -52,5 +53,19 @@ export default class Points extends AbstractObserver {
     ];
 
     this._notify(updateType);
+  }
+
+  parsePointToData(point) {
+    const data = Object.assign({}, JSON.parse(JSON.stringify(point)));
+    data.dateFrom = dayjs(data.dateFrom).toDate();
+    data.dateTo = dayjs(data.dateTo).toDate();
+    return data;
+  }
+
+  parseDataToPoint(data) {
+    const point = Object.assign({}, JSON.parse(JSON.stringify(data)));
+    point.dateFrom = dayjs(point.dateFrom).toDate();
+    point.dateTo = dayjs(point.dateTo).toDate();
+    return point;
   }
 }

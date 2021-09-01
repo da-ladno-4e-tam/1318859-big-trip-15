@@ -120,12 +120,6 @@ export default class Route {
                 this._renderHeader();*/
         this._eventPresenter.get(data.id).init(data);
         break;
-      case UpdateType.MIDDLE:
-        /*        this._clearHeader({resetSortType: true});
-                this._renderHeader();*/
-        // фильтры
-        this._eventPresenter.get(data.id).init(data);
-        break;
       case UpdateType.MAJOR:
         /*        this._clearHeader({resetSortType: true});
                 this._renderHeader();*/

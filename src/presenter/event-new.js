@@ -3,7 +3,7 @@ import {nanoid} from 'nanoid';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 
-export default class EventNew {
+export default class EventNew { //NewEventForm
   constructor(eventsContainer, changeData) {
     this._eventsContainer = eventsContainer;
     this._changeData = changeData;
@@ -55,7 +55,6 @@ export default class EventNew {
 
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
       this.destroy();
     }
   }
