@@ -3,7 +3,7 @@ import {nanoid} from 'nanoid';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../const.js';
 
-export default class EventNew { //NewEventForm
+export default class NewEventForm {
   constructor(eventsContainer, changeData) {
     this._eventsContainer = eventsContainer;
     this._changeData = changeData;
