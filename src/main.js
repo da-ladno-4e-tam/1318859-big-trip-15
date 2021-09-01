@@ -14,7 +14,6 @@ import {getData} from './mock/task.js';
 import {render, RenderPosition} from './utils/render.js';
 
 const points = getData();
-export const ids = points.map((point) => point.id);
 const towns = points.map((point) => point.destination.name);
 const startDates = points.map((point) => point.dateFrom);
 const finishDates = points.map((point) => point.dateTo);

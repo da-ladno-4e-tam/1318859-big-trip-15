@@ -20,7 +20,6 @@ export default class Route {
     this._noEventsComponent = null;
 
     this._eventsListViewComponent = new EventsListView();
-    // this._noEventsComponent = new NoEventsView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -44,10 +43,8 @@ export default class Route {
   }
 
   _getPoints() {
-    // const filterType = this._filterModel.getFilter();
     this._filterType = this._filterModel.getFilter();
     const points = this._pointsModel.getPoints();
-    // const filteredPoints = filter[filterType](points);
     const filteredPoints = filter[this._filterType](points);
     switch (this._currentSortType) {
       case SortType.DEFAULT:
