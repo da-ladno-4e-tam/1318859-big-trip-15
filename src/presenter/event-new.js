@@ -47,15 +47,18 @@ export default class NewEventForm {
       Object.assign({id: nanoid()}, point),
     );
     this.destroy();
+    document.querySelector('.trip-main__event-add-btn').disabled = false;
   }
 
   _handleDeleteClick() {
     this.destroy();
+    document.querySelector('.trip-main__event-add-btn').disabled = false;
   }
 
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       this.destroy();
+      document.querySelector('.trip-main__event-add-btn').disabled = false;
     }
   }
 }

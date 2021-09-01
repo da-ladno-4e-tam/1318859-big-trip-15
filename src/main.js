@@ -52,12 +52,12 @@ const handleSiteMenuClick = (menuItem) => {
     case MenuItem.POINTS:
       // Показать доску
       // Скрыть статистику
-      // Активировать кнопку создания точки
+      document.querySelector('.trip-main__event-add-btn').disabled = false;
       break;
     case MenuItem.STATISTICS:
       // Скрыть доску
       // Показать статистику
-      // Задизаблить кнопку создания точки
+      document.querySelector('.trip-main__event-add-btn').disabled = true;
       break;
   }
 };
