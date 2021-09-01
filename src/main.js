@@ -50,12 +50,12 @@ const filterPresenter = new FilterPresenter(filtersContainer, filterModel, point
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.POINTS:
-      // Показать доску
+      routePresenter.init();
       // Скрыть статистику
       document.querySelector('.trip-main__event-add-btn').disabled = false;
       break;
     case MenuItem.STATISTICS:
-      // Скрыть доску
+      routePresenter.destroy();
       // Показать статистику
       document.querySelector('.trip-main__event-add-btn').disabled = true;
       break;

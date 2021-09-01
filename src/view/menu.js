@@ -21,12 +21,12 @@ export default class Menu extends AbstractView {
 
   _menuClickHandler(evt) {
     evt.preventDefault();
-    this._callback.menuClick(evt.target.dataset);
+    this._callback.menuClick(evt.target.dataset.type);
   }
 
   setMenuClickHandler(callback) {
     this._callback.menuClick = callback;
-    this.getElement().addEventListener('change', this._menuClickHandler);
+    this.getElement().addEventListener('click', this._menuClickHandler);
   }
 
   setMenuItem(menuItem) {
