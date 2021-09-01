@@ -192,7 +192,6 @@ export default class EventForm extends SmartView {
     );
   }
 
-
   _setDateToPicker() {
     if (this._dateToPicker) {
       this._dateToPicker.destroy();
@@ -316,18 +315,4 @@ export default class EventForm extends SmartView {
     this._callback.deleteClick = callback;
     this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
-
-/*  static parsePointToData(point) {
-    const data = Object.assign({}, JSON.parse(JSON.stringify(point)));
-    data.dateFrom = dayjs(data.dateFrom).toDate();
-    data.dateTo = dayjs(data.dateTo).toDate();
-    return data;
-  }
-
-  static parseDataToPoint(data) {
-    const point = Object.assign({}, JSON.parse(JSON.stringify(data)));
-    point.dateFrom = dayjs(point.dateFrom).toDate();
-    point.dateTo = dayjs(point.dateTo).toDate();
-    return point;
-  }*/
 }
