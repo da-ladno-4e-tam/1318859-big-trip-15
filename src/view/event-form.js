@@ -1,11 +1,23 @@
+import he from 'he';
 import dayjs from 'dayjs';
 import SmartView from './smart.js';
 import {towns, types, destinations, generateOffersList} from '../mock/task.js';
 import OffersView from './offers.js';
 import DestinationView from './destination.js';
 import flatpickr from 'flatpickr';
+import PointsModel from '../model/points.js';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
+
+const NEW_POINT = {
+  type: 'bus',
+  basePrice: 0,
+  dateFrom: dayjs().toDate(),
+  dateTo: dayjs().toDate(),
+  offers: generateOffersList('bus'),
+  destination: {},
+  isFavorite: false,
+};
 
 const createEventFormButtonsTemplate = (id, isSubmitDisabled) => (
   id
@@ -68,7 +80,7 @@ const createEventFormTemplate = (data) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${town}" list="destination-list-1">
+                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(town)}" list="destination-list-1">
                     <datalist id="destination-list-1">
                       ${townItems}
                     </datalist>
@@ -87,7 +99,7 @@ const createEventFormTemplate = (data) => {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
+                    <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" step="1" name="event-price" value="${basePrice}">
                   </div>
 
                   ${formButtonsTemplate}
@@ -102,15 +114,16 @@ const createEventFormTemplate = (data) => {
 };
 
 export default class EventForm extends SmartView {
-  constructor(point) {
+  constructor(point = NEW_POINT) {
     super();
-    // point = JSON.parse(JSON.stringify(point));
-    this._data = EventForm.parsePointToData(point);
+    this._pointsModel = new PointsModel();
+    this._data = this._pointsModel.parsePointToData(point);
     this._dateFromPicker = null;
     this._dateToPicker = null;
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._editClickHandler = this._editClickHandler.bind(this);
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
 
 
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
@@ -125,9 +138,25 @@ export default class EventForm extends SmartView {
     this._setDateToPicker();
   }
 
+  // Перегружаем метод родителя removeElement,
+  // чтобы при удалении удалялся более ненужный календарь
+  removeElement() {
+    super.removeElement();
+
+    if (this._dateFromPicker) {
+      this._dateFromPicker.destroy();
+      this._dateFromPicker = null;
+    }
+
+    if (this._dateToPicker) {
+      this._dateToPicker.destroy();
+      this._dateToPicker = null;
+    }
+  }
+
   reset(point) {
     this.updateData(
-      EventForm.parsePointToData(point),
+      this._pointsModel.parsePointToData(point),
     );
   }
 
@@ -141,6 +170,7 @@ export default class EventForm extends SmartView {
     this._setDateToPicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setEditClickHandler(this._callback.editClick);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   _setDateFromPicker() {
@@ -161,7 +191,6 @@ export default class EventForm extends SmartView {
       },
     );
   }
-
 
   _setDateToPicker() {
     if (this._dateToPicker) {
@@ -188,7 +217,7 @@ export default class EventForm extends SmartView {
       .addEventListener('change', this._typeToggleHandler);
     this.getElement()
       .querySelector('#event-destination-1')
-      .addEventListener('change', this._townToggleHandler);
+      .addEventListener('input', this._townToggleHandler);
     this.getElement()
       .querySelector('#event-price-1')
       .addEventListener('input', this._priceInputHandler);
@@ -246,15 +275,18 @@ export default class EventForm extends SmartView {
   _townToggleHandler(evt) {
     evt.preventDefault();
     if (towns.indexOf(evt.target.value) !== -1) {
+      this.getElement().querySelector('.event__save-btn').disabled = false;
       this.updateData({
         destination: destinations.find((item) => item['name'] === evt.target.value),
       });
+    } else {
+      this.getElement().querySelector('.event__save-btn').disabled = true;
     }
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(EventForm.parseDataToPoint(this._data));
+    this._callback.formSubmit(this._pointsModel.parseDataToPoint(this._data));
   }
 
   _editClickHandler(evt) {
@@ -269,16 +301,18 @@ export default class EventForm extends SmartView {
 
   setEditClickHandler(callback) {
     this._callback.editClick = callback;
-    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
+    if (this._data.id) {
+      this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._editClickHandler);
+    }
   }
 
-  static parsePointToData(point) {
-    return Object.assign({}, point);
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(this._pointsModel.parseDataToPoint(this._data));
   }
 
-  static parseDataToPoint(data) {
-    data = Object.assign({}, data);
-
-    return data;
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
   }
 }

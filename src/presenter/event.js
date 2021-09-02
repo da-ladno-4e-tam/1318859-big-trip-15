@@ -1,6 +1,7 @@
 import EventFormView from '../view/event-form.js';
 import EventView from '../view/event.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
+import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -21,6 +22,7 @@ export default class Event {
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleFormEsc = this._handleFormEsc.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
   }
 
@@ -36,6 +38,7 @@ export default class Event {
     this._eventFormComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventFormComponent.setEditClickHandler(this._handleFormEsc);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._eventFormComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     this._reinit(prevEventComponent, prevEventFormComponent);
   }
@@ -88,14 +91,21 @@ export default class Event {
 
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
-      evt.preventDefault();
       this._eventFormComponent.reset(this._point);
       this._replaceFormToEvent();
     }
   }
 
-  _handleFormSubmit(point) {
-    this._changeData(point);
+  _handleFormSubmit(update) {
+    // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
+    // а значит требуют перерисовки списка - если таких нет, это MINOR-обновление
+    const isMajorUpdate =
+      this._point.dateFrom !== update.dateFrom ||
+      this._point.dateTo !== update.dateTo;
+    this._changeData(
+      UserAction.UPDATE_POINT,
+      isMajorUpdate ? UpdateType.MAJOR : UpdateType.MINOR,
+      update);
     this._replaceFormToEvent();
   }
 
@@ -106,6 +116,8 @@ export default class Event {
 
   _handleFavoriteClick() {
     this._changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.PATCH,
       Object.assign(
         {},
         this._point,
@@ -113,6 +125,14 @@ export default class Event {
           isFavorite: !this._point.isFavorite,
         },
       ),
+    );
+  }
+
+  _handleDeleteClick(point) {
+    this._changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MAJOR,
+      point,
     );
   }
 }

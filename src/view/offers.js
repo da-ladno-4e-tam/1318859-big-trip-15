@@ -16,7 +16,6 @@ const createOffersTemplate = (offers) => {
                       </div>`;
   };
   const formOffersList = (offers.length) ? offers.map((offer, i) => formOfferTemplate(offer, i )).join('') : '111';
-  // console.log(formOffersList);
   return `<section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 

@@ -1,44 +1,64 @@
 import SortView from '../view/sort.js';
 import EventsListView from '../view/events-list.js';
 import NoEventsView from '../view/no-events.js';
-import {updateItem} from '../utils/common.js';
-import {render, RenderPosition} from '../utils/render.js';
+import {render, RenderPosition, remove} from '../utils/render.js';
 import EventPresenter from './event.js';
-import {SortType} from '../const.js';
+import NewEventFormPresenter from './event-new.js';
+import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
+import {filter} from '../utils/filter.js';
+import NewEventButtonView from '../view/new-event-button.js';
 
 export default class Route {
-  constructor(routeContainer) {
+  constructor(routeContainer, pointsModel, filterModel) {
+    this._pointsModel = pointsModel;
+    this._filterModel = filterModel;
     this._routeContainer = routeContainer;
     this._eventPresenter = new Map();
-    this._eventsListViewComponent = new EventsListView();
-    this._sortComponent = new SortView();
-    this._noEventsComponent = new NoEventsView();
+    this._currentSortType = SortType.DEFAULT;
+    this._filterType = FilterType.EVERYTHING;
 
-    this._handleEventChange = this._handleEventChange.bind(this);
+    this._sortComponent = null;
+    this._noEventsComponent = null;
+
+    this._eventsListViewComponent = new EventsListView();
+    this._newEventButtonComponent = new NewEventButtonView();
+
+    this._handleViewAction = this._handleViewAction.bind(this);
+    this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
+
+    this._pointsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
+    this._newEventFormPresenter = new NewEventFormPresenter(this._eventsListViewComponent, this._handleViewAction);
   }
 
-  init(points) {
-    this._points = points.slice();
+  init() {
     this._renderRoute();
+    this._newEventButtonComponent.setNewPointClickHandler();
   }
 
-  _sortEvents(sortType) {
-    switch (sortType) {
+  createPoint() {
+    this._currentSortType = SortType.DEFAULT;
+    this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+    this._newEventFormPresenter.init();
+  }
+
+  _getPoints() {
+    this._filterType = this._filterModel.getFilter();
+    const points = this._pointsModel.getPoints();
+    const filteredPoints = filter[this._filterType](points);
+    switch (this._currentSortType) {
       case SortType.DEFAULT:
-        this._points.sort((a, b) => a.dateFrom.getTime() - b.dateFrom.getTime());
-        break;
+        return filteredPoints.sort((a, b) => a.dateFrom.getTime() - b.dateFrom.getTime());
       case SortType.TIME:
-        this._points.sort((a, b) => (a.dateFrom.getTime() - a.dateTo.getTime()) - (b.dateFrom.getTime() - b.dateTo.getTime()));
-        break;
+        return filteredPoints.sort((a, b) => (a.dateFrom.getTime() - a.dateTo.getTime()) - (b.dateFrom.getTime() - b.dateTo.getTime()));
       case SortType.PRICE:
-        this._points.sort((a, b) => b.basePrice - a.basePrice);
-        break;
-      default:
+        return filteredPoints.sort((a, b) => b.basePrice - a.basePrice);
     }
 
-    this._currentSortType = sortType;
+    return filteredPoints;
   }
 
   _handleSortTypeChange(sortType) {
@@ -46,53 +66,104 @@ export default class Route {
       return;
     }
 
-    this._sortEvents(sortType);
-    this._clearEventList();
-    this._renderEvents();
+    this._currentSortType = sortType;
+    this._clearRoute();
+    this._renderRoute();
   }
 
   _renderSort() {
-    render(this._routeContainer, this._sortComponent, RenderPosition.BEFOREEND);
+    if (this._sortComponent !== null) {
+      this._sortComponent = null;
+    }
+
+    this._sortComponent = new SortView(this._currentSortType);
     this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
+    render(this._routeContainer, this._sortComponent, RenderPosition.BEFOREEND);
   }
 
   _renderEvent(point) {
-    const eventPresenter = new EventPresenter(this._eventsListViewComponent, this._handleEventChange, this._handleModeChange);
+    const eventPresenter = new EventPresenter(this._eventsListViewComponent, this._handleViewAction, this._handleModeChange);
     eventPresenter.init(point);
     this._eventPresenter.set(point.id, eventPresenter);
   }
 
-  _renderEvents() {
+  _renderEvents(points) {
     render(this._routeContainer, this._eventsListViewComponent, RenderPosition.BEFOREEND);
-    for (let i = 0; i < this._points.length; i++) {
-      this._renderEvent(this._points[i]);
+    for (let i = 0; i < points.length; i++) {
+      this._renderEvent(points[i]);
     }
   }
 
   _renderNoEvents() {
+    this._noEventsComponent = new NoEventsView(this._filterType);
     render(this._routeContainer, this._noEventsComponent, RenderPosition.BEFOREEND);
   }
 
-  _clearEventList() {
-    this._eventPresenter.forEach((presenter) => presenter.destroy());
-    this._eventPresenter.clear();
+  _handleViewAction(actionType, updateType, update) {
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this._pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this._pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this._pointsModel.deletePoint(updateType, update);
+        break;
+    }
   }
 
-  _handleEventChange(updatedEvent) {
-    this._points = updateItem(this._points, updatedEvent);
-    this._eventPresenter.get(updatedEvent.id).init(updatedEvent);
+  _handleModelEvent(updateType, data) {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this._eventPresenter.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        /*        this._clearHeader({resetSortType: true});
+                this._renderHeader();*/
+        this._eventPresenter.get(data.id).init(data);
+        break;
+      case UpdateType.MAJOR:
+        /*        this._clearHeader({resetSortType: true});
+                this._renderHeader();*/
+        // фильтры
+        this._clearRoute({resetSortType: true});
+        this._renderRoute();
+        break;
+    }
   }
 
   _handleModeChange() {
+    this._newEventFormPresenter.destroy();
     this._eventPresenter.forEach((presenter) => presenter.resetMode());
   }
 
+  _clearRoute({resetSortType = false} = {}) {
+
+    this._newEventFormPresenter.destroy();
+    this._eventPresenter.forEach((presenter) => presenter.destroy());
+    this._eventPresenter.clear();
+
+    remove(this._sortComponent);
+
+    if (this._noEventsComponent) {
+      remove(this._noEventsComponent);
+    }
+
+    if (resetSortType) {
+      this._currentSortType = SortType.DEFAULT;
+    }
+  }
+
   _renderRoute() {
-    if (this._points.length === 0) {
+    const points = this._getPoints();
+    const pointCount = points.length;
+
+    if (pointCount === 0) {
       this._renderNoEvents();
     } else {
       this._renderSort();
-      this._renderEvents();
+      this._renderEvents(this._getPoints());
     }
   }
 }
