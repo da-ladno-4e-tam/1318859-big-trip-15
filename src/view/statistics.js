@@ -1,9 +1,14 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from './smart.js';
 import {tripDurationFormat} from '../utils/common.js';
 import {countAllEvents, makeItemsUniq, countPointsByType, countMoneyOfPointsByType, countTimeOfPointsByType} from '../utils/statistics.js';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const renderMoneyChart = (moneyCtx, points) => {
   const pointTypes = points.map((point) => point.type);
@@ -173,7 +178,7 @@ const renderTimeChart = (timeCtx, points) => {
           color: '#000000',
           anchor: 'end',
           align: 'start',
-          formatter: (val) => `${dayjs(val).format(tripDurationFormat(val / 60000))}`,
+          formatter: (val) => `${dayjs.utc(val).format(tripDurationFormat(val / 60000))}`,
         },
       },
       title: {

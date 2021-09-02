@@ -1,7 +1,12 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import AbstractView from './abstract.js';
 import {tripDurationFormat} from '../utils/common.js';
 import he from 'he';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const createEventTemplate = (point) => {
   const {
@@ -38,7 +43,7 @@ const createEventTemplate = (point) => {
                     &mdash;
                     <time class="event__end-time" datetime="${dayjs(dateTo).format('YYYY-MM-DDTHH:mm')}">${dayjs(dateTo).format('HH:mm')}</time>
                   </p>
-                  <p class="event__duration">${dayjs(dateTo - dateFrom + dateFrom.getTimezoneOffset() * 60000).format(tripDurationFormat(tripDuration))}</p>
+                  <p class="event__duration">${dayjs.utc(dateTo - dateFrom).format(tripDurationFormat(tripDuration))}</p>
                 </div>
                 <p class="event__price">
                   &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
