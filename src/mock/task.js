@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {getRandomInteger} from '../utils/common.js';
 
-const POINT_COUNT = 5;
+const POINT_COUNT = 12;
 
 export const offers = [
   {

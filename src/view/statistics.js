@@ -13,13 +13,14 @@ dayjs.extend(timezone);
 const renderMoneyChart = (moneyCtx, points) => {
   const pointTypes = points.map((point) => point.type);
   const uniqTypes = makeItemsUniq(pointTypes);
-  const pointByTypeSumMoney = uniqTypes.map((type) => countMoneyOfPointsByType(points, type));
+  const pointByTypeSumMoney = uniqTypes.map((type) => countMoneyOfPointsByType(points, type)).sort((a, b) => b - a);
+  const uniqTypesSorted = uniqTypes.map((type) => type).sort((a, b) => countMoneyOfPointsByType(points, b) - countMoneyOfPointsByType(points, a));
 
   return new Chart(moneyCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: uniqTypes,
+      labels: uniqTypesSorted,
       datasets: [{
         data: pointByTypeSumMoney,
         backgroundColor: '#ffffff',
@@ -84,13 +85,14 @@ const renderMoneyChart = (moneyCtx, points) => {
 const renderTypeChart = (typeCtx, points) => {
   const pointTypes = points.map((point) => point.type);
   const uniqTypes = makeItemsUniq(pointTypes);
-  const pointByTypeCounts = uniqTypes.map((type) => countPointsByType(points, type));
+  const pointByTypeCounts = uniqTypes.map((type) => countPointsByType(points, type)).sort((a, b) => b - a);
+  const uniqTypesSorted = uniqTypes.map((type) => type).sort((a, b) => countPointsByType(points, b) - countPointsByType(points, a));
 
   return new Chart(typeCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: uniqTypes,
+      labels: uniqTypesSorted,
       datasets: [{
         data: pointByTypeCounts,
         backgroundColor: '#ffffff',
@@ -155,13 +157,14 @@ const renderTypeChart = (typeCtx, points) => {
 const renderTimeChart = (timeCtx, points) => {
   const pointTypes = points.map((point) => point.type);
   const uniqTypes = makeItemsUniq(pointTypes);
-  const pointByTypeSumTime = uniqTypes.map((type) => countTimeOfPointsByType(points, type));
+  const pointByTypeSumTime = uniqTypes.map((type) => countTimeOfPointsByType(points, type)).sort((a, b) => b - a);
+  const uniqTypesSorted = uniqTypes.map((type) => type).sort((a, b) => countTimeOfPointsByType(points, b) - countTimeOfPointsByType(points, a));
 
   return new Chart(timeCtx, {
     plugins: [ChartDataLabels],
     type: 'horizontalBar',
     data: {
-      labels: uniqTypes,
+      labels: uniqTypesSorted,
       datasets: [{
         data: pointByTypeSumTime,
         backgroundColor: '#ffffff',
@@ -259,7 +262,6 @@ export default class Statistics extends SmartView {
     this._moneyChart = null;
     this._typeChart = null;
     this._timeChart = null;
-    // this._dateChangeHandler = this._dateChangeHandler.bind(this);
 
     this._setCharts();
   }

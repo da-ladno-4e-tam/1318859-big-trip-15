@@ -13,7 +13,7 @@ import FilterModel from './model/filter.js';
 import {MenuItem} from './const.js';
 
 import {getData} from './mock/task.js';
-import {render, RenderPosition} from './utils/render.js';
+import {render, RenderPosition, remove} from './utils/render.js';
 
 const points = getData();
 const towns = points.map((point) => point.destination.name);
@@ -48,17 +48,20 @@ render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.
 export const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, filterModel);
 const filterPresenter = new FilterPresenter(filtersContainer, filterModel, pointsModel);
 
+let statisticsComponent = null;
+
 const handleSiteMenuClick = (menuItem) => {
   switch (menuItem) {
     case MenuItem.POINTS:
       routePresenter.init();
-      // Скрыть статистику
+      remove(statisticsComponent);
       menuComponent.setMenuItem(MenuItem.POINTS);
       document.querySelector('.trip-main__event-add-btn').disabled = false;
       break;
     case MenuItem.STATISTICS:
       routePresenter.destroy();
-      // Показать статистику
+      statisticsComponent = new StatisticsView(pointsModel.getPoints());
+      render(mainContentContainer, statisticsComponent, RenderPosition.BEFOREEND);
       menuComponent.setMenuItem(MenuItem.STATISTICS);
       document.querySelector('.trip-main__event-add-btn').disabled = true;
       break;
@@ -68,7 +71,4 @@ const handleSiteMenuClick = (menuItem) => {
 menuComponent.setMenuClickHandler(handleSiteMenuClick);
 
 filterPresenter.init();
-// Для удобства отладки скроем доску
-// routePresenter.init();
-// и отобразим сразу статистику
-render(mainContentContainer, new StatisticsView(pointsModel.getPoints()), RenderPosition.BEFOREEND);
+routePresenter.init();
