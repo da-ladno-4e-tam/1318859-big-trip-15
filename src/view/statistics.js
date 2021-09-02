@@ -1,140 +1,221 @@
+import dayjs from 'dayjs';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from './smart.js';
-import {countAllEvents} from '../utils/statistics.js';
+import {tripDurationFormat} from '../utils/common.js';
+import {countAllEvents, makeItemsUniq, countPointsByType, countMoneyOfPointsByType, countTimeOfPointsByType} from '../utils/statistics.js';
 
-const renderMoneyChart = (moneyCtx, points) => new Chart(moneyCtx, {
-  plugins: [ChartDataLabels],
-  type: 'horizontalBar',
-  data: {
-    labels: ['TAXI', 'BUS', 'TRAIN', 'SHIP', 'TRANSPORT', 'DRIVE'],
-    datasets: [{
-      data: [400, 300, 200, 160, 150, 100],
-      backgroundColor: '#ffffff',
-      hoverBackgroundColor: '#ffffff',
-      anchor: 'start',
-    }],
-  },
-  options: {
-    plugins: {
-      datalabels: {
-        font: {
-          size: 13,
+const renderMoneyChart = (moneyCtx, points) => {
+  const pointTypes = points.map((point) => point.type);
+  const uniqTypes = makeItemsUniq(pointTypes);
+  const pointByTypeSumMoney = uniqTypes.map((type) => countMoneyOfPointsByType(points, type));
+
+  return new Chart(moneyCtx, {
+    plugins: [ChartDataLabels],
+    type: 'horizontalBar',
+    data: {
+      labels: uniqTypes,
+      datasets: [{
+        data: pointByTypeSumMoney,
+        backgroundColor: '#ffffff',
+        hoverBackgroundColor: '#ffffff',
+        anchor: 'start',
+      }],
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 13,
+          },
+          color: '#000000',
+          anchor: 'end',
+          align: 'start',
+          formatter: (val) => `€ ${val}`,
         },
-        color: '#000000',
-        anchor: 'end',
-        align: 'start',
-        formatter: (val) => '€ ${val}',
+      },
+      title: {
+        display: true,
+        text: 'MONEY',
+        fontColor: '#000000',
+        fontSize: 23,
+        position: 'left',
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: '#000000',
+            padding: 5,
+            fontSize: 13,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false,
+          },
+          barThickness: 44,
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false,
+          },
+          minBarLength: 50,
+        }],
+      },
+      legend: {
+        display: false,
+      },
+      tooltips: {
+        enabled: false,
       },
     },
-    title: {
-      display: true,
-      text: 'MONEY',
-      fontColor: '#000000',
-      fontSize: 23,
-      position: 'left',
-    },
-    scales: {
-      yAxes: [{
-        ticks: {
-          fontColor: '#000000',
-          padding: 5,
-          fontSize: 13,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false,
-        },
-        barThickness: 44,
-      }],
-      xAxes: [{
-        ticks: {
-          display: false,
-          beginAtZero: true,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false,
-        },
-        minBarLength: 50,
-      }],
-    },
-    legend: {
-      display: false,
-    },
-    tooltips: {
-      enabled: false,
-    },
-  },
-});
+  });
+};
 
-const renderTypeChart = (typeCtx, points) => new Chart(typeCtx, {
-  plugins: [ChartDataLabels],
-  type: 'horizontalBar',
-  data: {
-    labels: ['TAXI', 'BUS', 'TRAIN', 'SHIP', 'TRANSPORT', 'DRIVE'],
-    datasets: [{
-      data: [4, 3, 2, 1, 1, 1],
-      backgroundColor: '#ffffff',
-      hoverBackgroundColor: '#ffffff',
-      anchor: 'start',
-    }],
-  },
-  options: {
-    plugins: {
-      datalabels: {
-        font: {
-          size: 13,
+const renderTypeChart = (typeCtx, points) => {
+  const pointTypes = points.map((point) => point.type);
+  const uniqTypes = makeItemsUniq(pointTypes);
+  const pointByTypeCounts = uniqTypes.map((type) => countPointsByType(points, type));
+
+  return new Chart(typeCtx, {
+    plugins: [ChartDataLabels],
+    type: 'horizontalBar',
+    data: {
+      labels: uniqTypes,
+      datasets: [{
+        data: pointByTypeCounts,
+        backgroundColor: '#ffffff',
+        hoverBackgroundColor: '#ffffff',
+        anchor: 'start',
+      }],
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 13,
+          },
+          color: '#000000',
+          anchor: 'end',
+          align: 'start',
+          formatter: (val) => `${val}x`,
         },
-        color: '#000000',
-        anchor: 'end',
-        align: 'start',
-        formatter: (val) => '${val}x',
+      },
+      title: {
+        display: true,
+        text: 'TYPE',
+        fontColor: '#000000',
+        fontSize: 23,
+        position: 'left',
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: '#000000',
+            padding: 5,
+            fontSize: 13,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false,
+          },
+          barThickness: 44,
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false,
+          },
+          minBarLength: 50,
+        }],
+      },
+      legend: {
+        display: false,
+      },
+      tooltips: {
+        enabled: false,
       },
     },
-    title: {
-      display: true,
-      text: 'TYPE',
-      fontColor: '#000000',
-      fontSize: 23,
-      position: 'left',
-    },
-    scales: {
-      yAxes: [{
-        ticks: {
-          fontColor: '#000000',
-          padding: 5,
-          fontSize: 13,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false,
-        },
-        barThickness: 44,
-      }],
-      xAxes: [{
-        ticks: {
-          display: false,
-          beginAtZero: true,
-        },
-        gridLines: {
-          display: false,
-          drawBorder: false,
-        },
-        minBarLength: 50,
-      }],
-    },
-    legend: {
-      display: false,
-    },
-    tooltips: {
-      enabled: false,
-    },
-  },
-});
+  });
+};
 
 const renderTimeChart = (timeCtx, points) => {
+  const pointTypes = points.map((point) => point.type);
+  const uniqTypes = makeItemsUniq(pointTypes);
+  const pointByTypeSumTime = uniqTypes.map((type) => countTimeOfPointsByType(points, type));
 
+  return new Chart(timeCtx, {
+    plugins: [ChartDataLabels],
+    type: 'horizontalBar',
+    data: {
+      labels: uniqTypes,
+      datasets: [{
+        data: pointByTypeSumTime,
+        backgroundColor: '#ffffff',
+        hoverBackgroundColor: '#ffffff',
+        anchor: 'start',
+      }],
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 13,
+          },
+          color: '#000000',
+          anchor: 'end',
+          align: 'start',
+          formatter: (val) => `${dayjs(val).format(tripDurationFormat(val / 60000))}`,
+        },
+      },
+      title: {
+        display: true,
+        text: 'TIME',
+        fontColor: '#000000',
+        fontSize: 23,
+        position: 'left',
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: '#000000',
+            padding: 5,
+            fontSize: 13,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false,
+          },
+          barThickness: 44,
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true,
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false,
+          },
+          minBarLength: 50,
+        }],
+      },
+      legend: {
+        display: false,
+      },
+      tooltips: {
+        enabled: false,
+      },
+    },
+  });
 };
 
 const createStatisticsTemplate = (points) => {
