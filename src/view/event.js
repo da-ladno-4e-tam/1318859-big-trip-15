@@ -1,6 +1,12 @@
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import AbstractView from './abstract.js';
+import {tripDurationFormat} from '../utils/common.js';
 import he from 'he';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const createEventTemplate = (point) => {
   const {
@@ -14,17 +20,7 @@ const createEventTemplate = (point) => {
   } = point;
   const {name: town = ''} = destination;
   const favoriteActiveClass = isFavorite ? 'event__favorite-btn--active' : '';
-  const tripDuration = dayjs(dateTo).diff(dayjs(dateFrom), 'minute');
-
-  const tripDurationFormat = () => {
-    if (tripDuration > 23 * 60 + 59) {
-      return 'DD[D] HH[H] mm[M]';
-    } else if (tripDuration > 59) {
-      return 'HH[H] mm[M]';
-    } else {
-      return 'mm[M]';
-    }
-  };
+  const tripDuration = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
 
   const activeOfferTemplate = (title, price, isAdded) => (isAdded ? `<li class="event__offer">
                     <span class="event__offer-title">${title}</span>
@@ -47,7 +43,7 @@ const createEventTemplate = (point) => {
                     &mdash;
                     <time class="event__end-time" datetime="${dayjs(dateTo).format('YYYY-MM-DDTHH:mm')}">${dayjs(dateTo).format('HH:mm')}</time>
                   </p>
-                  <p class="event__duration">${dayjs(dateTo - dateFrom + dateFrom.getTimezoneOffset() * 60000).format(tripDurationFormat())}</p>
+                  <p class="event__duration">${dayjs.utc(dateTo - dateFrom).format(tripDurationFormat(tripDuration))}</p>
                 </div>
                 <p class="event__price">
                   &euro;&nbsp;<span class="event__price-value">${basePrice}</span>

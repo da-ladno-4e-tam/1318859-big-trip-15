@@ -20,6 +20,7 @@ export default class NewEventButton extends AbstractView {
     evt.preventDefault();
     routePresenter.createPoint();
     document.querySelector('.event__save-btn').disabled = true;
+    document.querySelector('.trip-main__event-add-btn').disabled = true;
   }
 
   setNewPointClickHandler() {
