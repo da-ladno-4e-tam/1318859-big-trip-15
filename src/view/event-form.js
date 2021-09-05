@@ -275,12 +275,12 @@ export default class EventForm extends SmartView {
   _townToggleHandler(evt) {
     evt.preventDefault();
     if (towns.indexOf(evt.target.value) !== -1) {
-      this.getElement().querySelector('.event__save-btn').disabled = false;
+      this.getElement().querySelector('.event__save-btn').removeAttribute('disabled');
       this.updateData({
         destination: destinations.find((item) => item['name'] === evt.target.value),
       });
     } else {
-      this.getElement().querySelector('.event__save-btn').disabled = true;
+      this.getElement().querySelector('.event__save-btn').setAttribute('disabled', 'disabled');
     }
   }
 

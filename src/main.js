@@ -56,14 +56,14 @@ const handleSiteMenuClick = (menuItem) => {
       routePresenter.init();
       remove(statisticsComponent);
       menuComponent.setMenuItem(MenuItem.POINTS);
-      document.querySelector('.trip-main__event-add-btn').disabled = false;
+      document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
       break;
     case MenuItem.STATISTICS:
       routePresenter.destroy();
       statisticsComponent = new StatisticsView(pointsModel.getPoints());
       render(mainContentContainer, statisticsComponent, RenderPosition.BEFOREEND);
       menuComponent.setMenuItem(MenuItem.STATISTICS);
-      document.querySelector('.trip-main__event-add-btn').disabled = true;
+      document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
       break;
   }
 };

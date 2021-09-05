@@ -5,9 +5,11 @@ export const getRandomInteger = (a = 0, b = 1) => {
 };
 
 export const tripDurationFormat = (tripDuration) => {
-  if (tripDuration > 23 * 60 + 59) {
+  const minutesInHour = 60;
+  const minutesInDay = 24 * minutesInHour;
+  if (tripDuration >= minutesInDay) {
     return 'DD[D] HH[H] mm[M]';
-  } else if (tripDuration > 59) {
+  } else if (tripDuration >= minutesInHour) {
     return 'HH[H] mm[M]';
   } else {
     return 'mm[M]';

@@ -19,8 +19,8 @@ export default class NewEventButton extends AbstractView {
   _newPointClickHandler(evt) {
     evt.preventDefault();
     routePresenter.createPoint();
-    document.querySelector('.event__save-btn').disabled = true;
-    document.querySelector('.trip-main__event-add-btn').disabled = true;
+    document.querySelector('.event__save-btn').setAttribute('disabled', 'disabled');
+    document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
   }
 
   setNewPointClickHandler() {

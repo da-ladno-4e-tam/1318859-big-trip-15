@@ -49,8 +49,6 @@ export default class Route {
   }
 
   createPoint() {
-    // this._currentSortType = SortType.DEFAULT;
-    // this._filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
     this._newEventFormPresenter.init();
   }
 
