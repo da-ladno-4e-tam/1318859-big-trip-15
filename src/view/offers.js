@@ -15,7 +15,7 @@ const createOffersTemplate = (offers) => {
                         </label>
                       </div>`;
   };
-  const formOffersList = (offers.length) ? offers.map((offer, i) => formOfferTemplate(offer, i )).join('') : '111';
+  const formOffersList = (offers.length) ? offers.map((offer, i) => formOfferTemplate(offer, i )).join('') : '';
   return `<section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
