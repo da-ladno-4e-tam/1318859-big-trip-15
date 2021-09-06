@@ -14,6 +14,7 @@ export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
+  INIT: 'INIT',
 };
 
 export const FilterType = {
@@ -26,3 +27,6 @@ export const MenuItem = {
   POINTS: 'POINTS',
   STATISTICS: 'STATISTICS',
 };
+
+export const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
+export const AUTHORIZATION = 'Basic daladno4etamschasvsyobudet';

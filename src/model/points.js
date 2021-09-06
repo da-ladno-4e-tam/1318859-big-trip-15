@@ -1,22 +1,25 @@
 import AbstractObserver from '../utils/abstract-observer.js';
 import dayjs from 'dayjs';
-// import {offers} from '../mock/task.js';
+import {offers} from '../mock/task.js';
 import Api from '../api.js';
 import OffersModel from './offers.js';
+import {END_POINT, AUTHORIZATION} from '../const.js';
 
 export default class Points extends AbstractObserver {
   constructor() {
     super();
     this._points = [];
     this._offersModel= new OffersModel();
-    this._api= new Api();
+    this._api= new Api(END_POINT, AUTHORIZATION);
     this._offers = this._api.getOffers().then((offers) => {
       this._offersModel.setOffers(offers);
     });
   }
 
-  setPoints(points) {
+  setPoints(updateType, points) {
     this._points = points.slice();
+
+    this._notify(updateType);
   }
 
   getPoints() {
@@ -80,7 +83,8 @@ export default class Points extends AbstractObserver {
   static adaptToClient(point) {
     // const offersModel = new OffersModel();
     // const pointOffers = offersModel.setOffers(offers)
-    const pointOffers = this._offers
+    const pointOffers = offers
+    // const pointOffers = this._offers
       .find((offer) => offer.type === point.type).offers
       .map((offer) => {
         delete offer.isAdded;
@@ -132,8 +136,6 @@ export default class Points extends AbstractObserver {
     delete adaptedPoint.dateTo;
     delete adaptedPoint.basePrice;
     delete adaptedPoint.isFavorite;
-
-    console.log(adaptedPoint);
 
     return adaptedPoint;
   }

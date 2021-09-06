@@ -1,12 +1,15 @@
 import SortView from '../view/sort.js';
 import EventsListView from '../view/events-list.js';
+import LoadingView from '../view/loading.js';
 import NoEventsView from '../view/no-events.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import EventPresenter from './event.js';
 import NewEventFormPresenter from './event-new.js';
-import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
+import {AUTHORIZATION, END_POINT, SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {filter} from '../utils/filter.js';
 import NewEventButtonView from '../view/new-event-button.js';
+
+import Api from '../api.js';
 
 export default class Route {
   constructor(routeContainer, pointsModel, filterModel) {
@@ -16,12 +19,14 @@ export default class Route {
     this._eventPresenter = new Map();
     this._currentSortType = SortType.DEFAULT;
     this._filterType = FilterType.EVERYTHING;
+    this._isLoading = true;
 
     this._sortComponent = null;
     this._noEventsComponent = null;
 
     this._eventsListViewComponent = new EventsListView();
     this._newEventButtonComponent = new NewEventButtonView();
+    this._loadingComponent = new LoadingView();
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -94,6 +99,10 @@ export default class Route {
     this._eventPresenter.set(point.id, eventPresenter);
   }
 
+  _renderLoading() {
+    render(this._routeContainer, this._loadingComponent, RenderPosition.AFTERBEGIN);
+  }
+
   _renderEvents(points) {
     render(this._routeContainer, this._eventsListViewComponent, RenderPosition.BEFOREEND);
     for (let i = 0; i < points.length; i++) {
@@ -137,6 +146,11 @@ export default class Route {
         this._clearRoute({resetSortType: true});
         this._renderRoute();
         break;
+      case UpdateType.INIT:
+        this._isLoading = false;
+        remove(this._loadingComponent);
+        this._renderRoute();
+        break;
     }
   }
 
@@ -152,6 +166,7 @@ export default class Route {
     this._eventPresenter.clear();
 
     remove(this._sortComponent);
+    remove(this._loadingComponent);
 
     if (this._noEventsComponent) {
       remove(this._noEventsComponent);
@@ -163,6 +178,11 @@ export default class Route {
   }
 
   _renderRoute() {
+    if (this._isLoading) {
+      this._renderLoading();
+      return;
+    }
+
     const points = this._getPoints();
     const pointCount = points.length;
 

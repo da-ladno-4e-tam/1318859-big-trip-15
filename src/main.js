@@ -12,13 +12,13 @@ import OffersModel from './model/offers.js';
 import DestinationsModel from './model/destinations.js';
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
-import {MenuItem} from './const.js';
+import {MenuItem, UpdateType, END_POINT, AUTHORIZATION} from './const.js';
 import Api from './api.js';
 // import {getData} from './mock/task.js';
 import {render, RenderPosition, remove} from './utils/render.js';
 
-const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
-const AUTHORIZATION = 'Basic daladno4etamschasvsyobudet';
+/*const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
+const AUTHORIZATION = 'Basic daladno4etamschasvsyobudet';*/
 
 const headerElement = document.querySelector('.page-header');
 const mainElement = document.querySelector('.page-main');
@@ -72,14 +72,18 @@ menuComponent.setMenuClickHandler(handleSiteMenuClick);
 filterPresenter.init();
 routePresenter.init();
 
-api.getPoints().then((points) => {
-  pointsModel.setPoints(points);
+api.getPoints()
+  .then((points) => {
+    pointsModel.setPoints(UpdateType.INIT, points);
 
-  const tripTowns = points.map((point) => point.destination.name);
-  const startDates = points.map((point) => point.dateFrom);
-  const finishDates = points.map((point) => point.dateTo);
+    const tripTowns = points.map((point) => point.destination.name);
+    const startDates = points.map((point) => point.dateFrom);
+    const finishDates = points.map((point) => point.dateTo);
 
-  render(tripInfoSection, new TripCostView(points), RenderPosition.BEFOREEND);
-  render(tripInfoMain, new TripTitleView(tripTowns), RenderPosition.BEFOREEND);
-  render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.BEFOREEND);
-});
+    render(tripInfoSection, new TripCostView(points), RenderPosition.BEFOREEND);
+    render(tripInfoMain, new TripTitleView(tripTowns), RenderPosition.BEFOREEND);
+    render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.BEFOREEND);
+  })
+  .catch(() => {
+    pointsModel.setPoints(UpdateType.INIT, []);
+  });
