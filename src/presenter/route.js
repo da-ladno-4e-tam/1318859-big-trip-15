@@ -5,14 +5,12 @@ import NoEventsView from '../view/no-events.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
 import EventPresenter from './event.js';
 import NewEventFormPresenter from './event-new.js';
-import {AUTHORIZATION, END_POINT, SortType, UpdateType, UserAction, FilterType} from '../const.js';
+import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {filter} from '../utils/filter.js';
 import NewEventButtonView from '../view/new-event-button.js';
 
-import Api from '../api.js';
-
 export default class Route {
-  constructor(routeContainer, pointsModel, filterModel) {
+  constructor(routeContainer, pointsModel, filterModel, api) {
     this._pointsModel = pointsModel;
     this._filterModel = filterModel;
     this._routeContainer = routeContainer;
@@ -20,6 +18,7 @@ export default class Route {
     this._currentSortType = SortType.DEFAULT;
     this._filterType = FilterType.EVERYTHING;
     this._isLoading = true;
+    this._api = api;
 
     this._sortComponent = null;
     this._noEventsComponent = null;
@@ -118,7 +117,9 @@ export default class Route {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
-        this._pointsModel.updatePoint(updateType, update);
+        this._api.updatePoint(update).then((response) => {
+          this._pointsModel.updatePoint(updateType, response);
+        });
         break;
       case UserAction.ADD_POINT:
         this._pointsModel.addPoint(updateType, update);

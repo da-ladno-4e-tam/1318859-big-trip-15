@@ -17,9 +17,6 @@ import Api from './api.js';
 // import {getData} from './mock/task.js';
 import {render, RenderPosition, remove} from './utils/render.js';
 
-/*const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
-const AUTHORIZATION = 'Basic daladno4etamschasvsyobudet';*/
-
 const headerElement = document.querySelector('.page-header');
 const mainElement = document.querySelector('.page-main');
 const tripInfoContainer = headerElement.querySelector('.trip-main');
@@ -28,23 +25,23 @@ const filtersContainer = headerElement.querySelector('.trip-controls__filters');
 const mainContentContainer = mainElement.querySelector('.trip-events');
 
 // const points = getData();
-// console.log(points[0]);
 const api = new Api(END_POINT, AUTHORIZATION);
 
 const pointsModel = new PointsModel();
+const offersModel = new OffersModel();
+const destinationsModel = new DestinationsModel();
 const filterModel = new FilterModel();
 
 const menuComponent = new MenuView();
 
 const newEventButton = new NewEventButtonView();
 render(tripInfoContainer, newEventButton, RenderPosition.BEFOREEND);
-render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
 const tripInfoSection = new TripInfoSectionView();
 render(tripInfoContainer, tripInfoSection, RenderPosition.AFTERBEGIN);
 const tripInfoMain = new TripInfoMainView();
 render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
 
-export const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, filterModel);
+export const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, filterModel, api);
 const filterPresenter = new FilterPresenter(filtersContainer, filterModel, pointsModel);
 
 let statisticsComponent = null;
@@ -67,10 +64,23 @@ const handleSiteMenuClick = (menuItem) => {
   }
 };
 
-menuComponent.setMenuClickHandler(handleSiteMenuClick);
-
-filterPresenter.init();
 routePresenter.init();
+
+api.getOffers()
+  .then((offers) => {
+    offersModel.setOffers(offers);
+  })
+  .catch(() => {
+    offersModel.setOffers([]);
+  });
+
+api.getDestinations()
+  .then((destinations) => {
+    destinationsModel.setDestinations(destinations);
+  })
+  .catch(() => {
+    destinationsModel.setDestinations([]);
+  });
 
 api.getPoints()
   .then((points) => {
@@ -83,7 +93,13 @@ api.getPoints()
     render(tripInfoSection, new TripCostView(points), RenderPosition.BEFOREEND);
     render(tripInfoMain, new TripTitleView(tripTowns), RenderPosition.BEFOREEND);
     render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.BEFOREEND);
+    render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
+    filterPresenter.init();
+    menuComponent.setMenuClickHandler(handleSiteMenuClick);
   })
   .catch(() => {
     pointsModel.setPoints(UpdateType.INIT, []);
+    render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
+    menuComponent.setMenuClickHandler(handleSiteMenuClick);
+    filterPresenter.init();
   });
