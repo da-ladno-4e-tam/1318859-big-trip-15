@@ -1,11 +1,10 @@
 import he from 'he';
 import dayjs from 'dayjs';
 import SmartView from './smart.js';
-import {towns, types, destinations, generateOffersList} from '../mock/task.js';
+import {generateOffersList} from '../utils/common.js';
 import OffersView from './offers.js';
 import DestinationView from './destination.js';
 import flatpickr from 'flatpickr';
-import PointsModel from '../model/points.js';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
@@ -14,7 +13,11 @@ const NEW_POINT = {
   basePrice: 0,
   dateFrom: dayjs().toDate(),
   dateTo: dayjs().toDate(),
-  offers: generateOffersList('bus'),
+  offers: [
+    {'title': 'Infotainment system', 'price': 50},
+    {'title': 'Order meal', 'price': 100},
+    {'title': 'Choose seats', 'price': 190},
+  ],
   destination: {},
   isFavorite: false,
 };
@@ -37,7 +40,7 @@ const createEventTypeItemTemplate = (eventType, isChecked) => (
                         </div>`
 );
 
-const createEventFormTemplate = (data) => {
+const createEventFormTemplate = (data, towns, types) => {
   const {
     type = '',
     id = 0,
@@ -114,9 +117,13 @@ const createEventFormTemplate = (data) => {
 };
 
 export default class EventForm extends SmartView {
-  constructor(point = NEW_POINT) {
+  constructor(point = NEW_POINT, offersModel, destinationsModel, pointsModel) {
     super();
-    this._pointsModel = new PointsModel();
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
+    this._pointsModel = pointsModel;
+    this._towns = this._destinationsModel.getDestinations().map((item) => item['name']);
+    this._types = this._offersModel.getOffers().map((item) => item['type']);
     this._data = this._pointsModel.parsePointToData(point);
     this._dateFromPicker = null;
     this._dateToPicker = null;
@@ -161,7 +168,7 @@ export default class EventForm extends SmartView {
   }
 
   getTemplate() {
-    return createEventFormTemplate(this._data);
+    return createEventFormTemplate(this._data, this._towns, this._types);
   }
 
   restoreHandlers() {
@@ -243,7 +250,6 @@ export default class EventForm extends SmartView {
   _offerChangeHandler(evt) {
     evt.preventDefault();
     const changedElementIndex = Number(evt.target.dataset.index);
-    // this._data.offers[changedElementIndex].isAdded = evt.target.checked;
     this.updateData({
       offers: Object.assign(
         [],
@@ -267,17 +273,17 @@ export default class EventForm extends SmartView {
       offers: Object.assign(
         [],
         [],
-        generateOffersList(evt.target.value),
+        generateOffersList(this._offersModel.getOffers(), evt.target.value),
       ),
     });
   }
 
   _townToggleHandler(evt) {
     evt.preventDefault();
-    if (towns.indexOf(evt.target.value) !== -1) {
+    if (this._towns.indexOf(evt.target.value) !== -1) {
       this.getElement().querySelector('.event__save-btn').removeAttribute('disabled');
       this.updateData({
-        destination: destinations.find((item) => item['name'] === evt.target.value),
+        destination: this._destinationsModel.getDestinations().find((item) => item['name'] === evt.target.value),
       });
     } else {
       this.getElement().querySelector('.event__save-btn').setAttribute('disabled', 'disabled');

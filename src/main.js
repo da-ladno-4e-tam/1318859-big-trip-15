@@ -27,9 +27,9 @@ const mainContentContainer = mainElement.querySelector('.trip-events');
 // const points = getData();
 const api = new Api(END_POINT, AUTHORIZATION);
 
-const pointsModel = new PointsModel();
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
+const pointsModel = new PointsModel(offersModel);
 const filterModel = new FilterModel();
 
 const menuComponent = new MenuView();
@@ -41,7 +41,7 @@ render(tripInfoContainer, tripInfoSection, RenderPosition.AFTERBEGIN);
 const tripInfoMain = new TripInfoMainView();
 render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
 
-export const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, filterModel, api);
+export const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, offersModel, destinationsModel, filterModel, api);
 const filterPresenter = new FilterPresenter(filtersContainer, filterModel, pointsModel);
 
 let statisticsComponent = null;
@@ -88,7 +88,16 @@ routePresenter.init();
     filterPresenter.init();
   });*/
 
-const points = api.getPoints()
+const offersPromise = api.getOffers()
+  .then((offers) => {
+    offersModel.setOffers(offers);
+    // return offers;
+  })
+  .catch(() => {
+    offersModel.setOffers([]);
+  });
+
+const pointsPromise = api.getPoints()
   .then((points) => {
     pointsModel.setPoints(UpdateType.INIT, points);
   })
@@ -96,28 +105,19 @@ const points = api.getPoints()
     pointsModel.setPoints(UpdateType.INIT, []);
   });
 
-const offers = api.getOffers()
-  .then((offers) => {
-    console.log(offers);
-    offersModel.setOffers(offers);
-    console.log(offersModel.getOffers());
-  })
-  .catch(() => {
-    offersModel.setOffers([]);
-  });
-
-const destinations = api.getDestinations()
+const destinationsPromise = api.getDestinations()
   .then((destinations) => {
-    console.log(destinations);
     destinationsModel.setDestinations(destinations);
-    console.log(destinationsModel.getDestinations());
+    // return destinations;
   })
   .catch(() => {
     destinationsModel.setDestinations([]);
   });
 
-Promise.all([offers, destinations, points])
-  .then((points) => {
+Promise.all([offersPromise, destinationsPromise, pointsPromise])
+  .then(() => {
+    console.log(offersModel.getOffers());
+    PointsModel.adaptToClient()
     const tripTowns = points.map((point) => point.destination.name);
     const startDates = points.map((point) => point.dateFrom);
     const finishDates = points.map((point) => point.dateTo);

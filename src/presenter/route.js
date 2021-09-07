@@ -10,8 +10,10 @@ import {filter} from '../utils/filter.js';
 import NewEventButtonView from '../view/new-event-button.js';
 
 export default class Route {
-  constructor(routeContainer, pointsModel, filterModel, api) {
+  constructor(routeContainer, pointsModel, offersModel, destinationsModel, filterModel, api) {
     this._pointsModel = pointsModel;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
     this._filterModel = filterModel;
     this._routeContainer = routeContainer;
     this._eventPresenter = new Map();
@@ -93,7 +95,7 @@ export default class Route {
   }
 
   _renderEvent(point) {
-    const eventPresenter = new EventPresenter(this._eventsListViewComponent, this._handleViewAction, this._handleModeChange);
+    const eventPresenter = new EventPresenter(this._eventsListViewComponent, this._handleViewAction, this._handleModeChange, this._offersModel, this._destinationsModel, this._pointsModel);
     eventPresenter.init(point);
     this._eventPresenter.set(point.id, eventPresenter);
   }
@@ -131,6 +133,7 @@ export default class Route {
   }
 
   _handleModelEvent(updateType, data) {
+    console.log(updateType, data);
     switch (updateType) {
       case UpdateType.PATCH:
         this._eventPresenter.get(data.id).init(data);
