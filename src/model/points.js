@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import {offers} from '../mock/task.js';
 
 export default class Points extends AbstractObserver {
-  constructor(offersModel) {
+  constructor() {
     super();
     this._points = [];
   }
@@ -73,7 +73,7 @@ export default class Points extends AbstractObserver {
   }
 
   static adaptToClient(point) {
-    const offers = offersModel.getOffers();
+    // const offers = offersModel.getOffers();
     const pointOffers = offers
       .find((offer) => offer.type === point.type).offers
       .map((offer) => {
