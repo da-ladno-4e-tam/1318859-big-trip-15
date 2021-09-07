@@ -1,7 +1,7 @@
 import AbstractObserver from '../utils/abstract-observer.js';
 import dayjs from 'dayjs';
 import {offers} from '../mock/task.js';
-// import OffersModel from './offers.js';
+import OffersModel from './offers.js';
 
 export default class Points extends AbstractObserver {
   constructor() {
@@ -75,6 +75,7 @@ export default class Points extends AbstractObserver {
 
   static adaptToClient(point) {
     // const offersModel = new OffersModel();
+    // console.log(offersModel.getOffers());
     // const pointOffers = offersModel.getOffers()
     const pointOffers = offers
       .find((offer) => offer.type === point.type).offers
@@ -83,7 +84,6 @@ export default class Points extends AbstractObserver {
         offer.isAdded = JSON.stringify(point.offers).indexOf(JSON.stringify(offer)) !== -1;
         return offer;
       });
-
 
     const adaptedPoint = Object.assign(
       {},
@@ -96,7 +96,6 @@ export default class Points extends AbstractObserver {
         offers: pointOffers,
       },
     );
-
     // Ненужные ключи мы удаляем
     delete adaptedPoint['date_from'];
     delete adaptedPoint['date_to'];
@@ -122,7 +121,6 @@ export default class Points extends AbstractObserver {
           }),
       },
     );
-
     // Ненужные ключи мы удаляем
     delete adaptedPoint.dateFrom;
     delete adaptedPoint.dateTo;

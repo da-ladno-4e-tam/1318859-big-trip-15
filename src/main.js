@@ -66,26 +66,58 @@ const handleSiteMenuClick = (menuItem) => {
 
 routePresenter.init();
 
-api.getOffers()
+/*api.getPoints()
+  .then((points) => {
+    pointsModel.setPoints(UpdateType.INIT, points);
+
+    const tripTowns = points.map((point) => point.destination.name);
+    const startDates = points.map((point) => point.dateFrom);
+    const finishDates = points.map((point) => point.dateTo);
+
+    render(tripInfoSection, new TripCostView(points), RenderPosition.BEFOREEND);
+    render(tripInfoMain, new TripTitleView(tripTowns), RenderPosition.BEFOREEND);
+    render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.BEFOREEND);
+    render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
+    filterPresenter.init();
+    menuComponent.setMenuClickHandler(handleSiteMenuClick);
+  })
+  .catch(() => {
+    pointsModel.setPoints(UpdateType.INIT, []);
+    render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
+    menuComponent.setMenuClickHandler(handleSiteMenuClick);
+    filterPresenter.init();
+  });*/
+
+const points = api.getPoints()
+  .then((points) => {
+    pointsModel.setPoints(UpdateType.INIT, points);
+  })
+  .catch(() => {
+    pointsModel.setPoints(UpdateType.INIT, []);
+  });
+
+const offers = api.getOffers()
   .then((offers) => {
+    console.log(offers);
     offersModel.setOffers(offers);
+    console.log(offersModel.getOffers());
   })
   .catch(() => {
     offersModel.setOffers([]);
   });
 
-api.getDestinations()
+const destinations = api.getDestinations()
   .then((destinations) => {
+    console.log(destinations);
     destinationsModel.setDestinations(destinations);
+    console.log(destinationsModel.getDestinations());
   })
   .catch(() => {
     destinationsModel.setDestinations([]);
   });
 
-api.getPoints()
+Promise.all([offers, destinations, points])
   .then((points) => {
-    pointsModel.setPoints(UpdateType.INIT, points);
-
     const tripTowns = points.map((point) => point.destination.name);
     const startDates = points.map((point) => point.dateFrom);
     const finishDates = points.map((point) => point.dateTo);
