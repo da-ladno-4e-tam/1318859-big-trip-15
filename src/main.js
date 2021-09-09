@@ -35,10 +35,10 @@ const filterModel = new FilterModel();
 const menuComponent = new MenuView();
 
 const newEventButton = new NewEventButtonView();
-render(tripInfoContainer, newEventButton, RenderPosition.BEFOREEND);
 const tripInfoSection = new TripInfoSectionView();
-render(tripInfoContainer, tripInfoSection, RenderPosition.AFTERBEGIN);
 const tripInfoMain = new TripInfoMainView();
+
+render(tripInfoContainer, tripInfoSection, RenderPosition.AFTERBEGIN);
 render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
 
 export const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, offersModel, destinationsModel, filterModel, api);
@@ -64,34 +64,17 @@ const handleSiteMenuClick = (menuItem) => {
   }
 };
 
+const handleNewPointClick = () => {
+  routePresenter.createPoint();
+  document.querySelector('.event__save-btn').setAttribute('disabled', 'disabled');
+  document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
+};
+
 routePresenter.init();
-
-/*api.getPoints()
-  .then((points) => {
-    pointsModel.setPoints(UpdateType.INIT, points);
-
-    const tripTowns = points.map((point) => point.destination.name);
-    const startDates = points.map((point) => point.dateFrom);
-    const finishDates = points.map((point) => point.dateTo);
-
-    render(tripInfoSection, new TripCostView(points), RenderPosition.BEFOREEND);
-    render(tripInfoMain, new TripTitleView(tripTowns), RenderPosition.BEFOREEND);
-    render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.BEFOREEND);
-    render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
-    filterPresenter.init();
-    menuComponent.setMenuClickHandler(handleSiteMenuClick);
-  })
-  .catch(() => {
-    pointsModel.setPoints(UpdateType.INIT, []);
-    render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
-    menuComponent.setMenuClickHandler(handleSiteMenuClick);
-    filterPresenter.init();
-  });*/
 
 const offersPromise = api.getOffers()
   .then((offers) => {
     offersModel.setOffers(offers);
-    // return offers;
   })
   .catch(() => {
     offersModel.setOffers([]);
@@ -108,7 +91,6 @@ const pointsPromise = api.getPoints()
 const destinationsPromise = api.getDestinations()
   .then((destinations) => {
     destinationsModel.setDestinations(destinations);
-    // return destinations;
   })
   .catch(() => {
     destinationsModel.setDestinations([]);
@@ -116,22 +98,24 @@ const destinationsPromise = api.getDestinations()
 
 Promise.all([offersPromise, destinationsPromise, pointsPromise])
   .then(() => {
-    console.log(offersModel.getOffers());
-    PointsModel.adaptToClient()
+    PointsModel.adaptToClient();
     const tripTowns = points.map((point) => point.destination.name);
     const startDates = points.map((point) => point.dateFrom);
     const finishDates = points.map((point) => point.dateTo);
 
+    render(tripInfoContainer, newEventButton, RenderPosition.BEFOREEND);
     render(tripInfoSection, new TripCostView(points), RenderPosition.BEFOREEND);
     render(tripInfoMain, new TripTitleView(tripTowns), RenderPosition.BEFOREEND);
     render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.BEFOREEND);
     render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
     filterPresenter.init();
+    newEventButton.setNewPointClickHandler(handleNewPointClick);
     menuComponent.setMenuClickHandler(handleSiteMenuClick);
   })
   .catch(() => {
-    pointsModel.setPoints(UpdateType.INIT, []);
+    render(tripInfoContainer, newEventButton, RenderPosition.BEFOREEND);
     render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
-    menuComponent.setMenuClickHandler(handleSiteMenuClick);
     filterPresenter.init();
+    newEventButton.setNewPointClickHandler(handleNewPointClick);
+    menuComponent.setMenuClickHandler(handleSiteMenuClick);
   });

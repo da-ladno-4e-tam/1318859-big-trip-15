@@ -1,3 +1,19 @@
+import dayjs from 'dayjs';
+
+export const NEW_POINT = {
+  type: 'bus',
+  basePrice: 0,
+  dateFrom: dayjs().toDate(),
+  dateTo: dayjs().toDate(),
+  offers: [
+    {'title': 'Infotainment system', 'price': 50},
+    {'title': 'Order meal', 'price': 100},
+    {'title': 'Choose seats', 'price': 190},
+  ],
+  destination: {},
+  isFavorite: false,
+};
+
 export const SortType = {
   DEFAULT: 'default',
   PRICE: 'price',

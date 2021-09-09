@@ -1,12 +1,15 @@
 import EventFormView from '../view/event-form.js';
 import {nanoid} from 'nanoid';
 import {remove, render, RenderPosition} from '../utils/render.js';
-import {UserAction, UpdateType} from '../const.js';
+import {NEW_POINT, UserAction, UpdateType} from '../const.js';
 
 export default class NewEventForm {
-  constructor(eventsContainer, changeData) {
+  constructor(eventsContainer, changeData, offersModel, destinationsModel, pointsModel) {
     this._eventsContainer = eventsContainer;
     this._changeData = changeData;
+    this._pointsModel = pointsModel;
+    this._offersModel = offersModel;
+    this._destinationsModel = destinationsModel;
 
     this._eventFormComponent = null;
 
@@ -20,7 +23,7 @@ export default class NewEventForm {
       return;
     }
 
-    this._eventFormComponent = new EventFormView();
+    this._eventFormComponent = new EventFormView(NEW_POINT, this._offersModel, this._destinationsModel, this._pointsModel);
     this._eventFormComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventFormComponent.setDeleteClickHandler(this._handleDeleteClick);
 

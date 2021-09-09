@@ -34,7 +34,13 @@ export default class Route {
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
 
-    this._newEventFormPresenter = new NewEventFormPresenter(this._eventsListViewComponent, this._handleViewAction);
+    this._newEventFormPresenter = new NewEventFormPresenter(
+      this._eventsListViewComponent,
+      this._handleViewAction,
+      this._offersModel,
+      this._destinationsModel,
+      this._pointsModel,
+    );
   }
 
   init() {

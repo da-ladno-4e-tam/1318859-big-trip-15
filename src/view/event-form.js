@@ -8,20 +8,6 @@ import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const NEW_POINT = {
-  type: 'bus',
-  basePrice: 0,
-  dateFrom: dayjs().toDate(),
-  dateTo: dayjs().toDate(),
-  offers: [
-    {'title': 'Infotainment system', 'price': 50},
-    {'title': 'Order meal', 'price': 100},
-    {'title': 'Choose seats', 'price': 190},
-  ],
-  destination: {},
-  isFavorite: false,
-};
-
 const createEventFormButtonsTemplate = (id, isSubmitDisabled) => (
   id
     ? `<button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled ? 'disabled' : ''}>Save</button>
@@ -117,7 +103,7 @@ const createEventFormTemplate = (data, towns, types) => {
 };
 
 export default class EventForm extends SmartView {
-  constructor(point = NEW_POINT, offersModel, destinationsModel, pointsModel) {
+  constructor(point, offersModel, destinationsModel, pointsModel) {
     super();
     this._offersModel = offersModel;
     this._destinationsModel = destinationsModel;
