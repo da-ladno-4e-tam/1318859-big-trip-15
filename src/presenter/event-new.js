@@ -1,5 +1,4 @@
 import EventFormView from '../view/event-form.js';
-import {nanoid} from 'nanoid';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {NEW_POINT, UserAction, UpdateType} from '../const.js';
 
@@ -47,7 +46,7 @@ export default class NewEventForm {
     this._changeData(
       UserAction.ADD_POINT,
       UpdateType.MAJOR,
-      Object.assign({id: nanoid()}, point),
+      point,
     );
     this.destroy();
     document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');

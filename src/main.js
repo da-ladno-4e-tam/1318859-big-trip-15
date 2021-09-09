@@ -14,7 +14,6 @@ import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
 import {MenuItem, UpdateType, END_POINT, AUTHORIZATION} from './const.js';
 import Api from './api.js';
-// import {getData} from './mock/task.js';
 import {render, RenderPosition, remove} from './utils/render.js';
 
 const headerElement = document.querySelector('.page-header');
@@ -24,7 +23,6 @@ const menuContainer = headerElement.querySelector('.trip-controls__navigation');
 const filtersContainer = headerElement.querySelector('.trip-controls__filters');
 const mainContentContainer = mainElement.querySelector('.trip-events');
 
-// const points = getData();
 const api = new Api(END_POINT, AUTHORIZATION);
 
 const offersModel = new OffersModel();
@@ -41,7 +39,7 @@ const tripInfoMain = new TripInfoMainView();
 render(tripInfoContainer, tripInfoSection, RenderPosition.AFTERBEGIN);
 render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
 
-export const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, offersModel, destinationsModel, filterModel, api);
+const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, offersModel, destinationsModel, filterModel, api);
 const filterPresenter = new FilterPresenter(filtersContainer, filterModel, pointsModel);
 
 let statisticsComponent = null;
