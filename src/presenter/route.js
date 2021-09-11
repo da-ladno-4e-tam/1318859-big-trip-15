@@ -3,7 +3,7 @@ import EventsListView from '../view/events-list.js';
 import LoadingView from '../view/loading.js';
 import NoEventsView from '../view/no-events.js';
 import {render, RenderPosition, remove} from '../utils/render.js';
-import EventPresenter from './event.js';
+import EventPresenter, {State as EventPresenterViewState} from './event.js';
 import NewEventFormPresenter from './event-new.js';
 import {SortType, UpdateType, UserAction, FilterType} from '../const.js';
 import {filter} from '../utils/filter.js';
@@ -125,16 +125,20 @@ export default class Route {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
+        this._eventPresenter.get(update.id).setViewState(EventPresenterViewState.SAVING);
+        console.log(update);
         this._api.updatePoint(update).then((response) => {
           this._pointsModel.updatePoint(updateType, response);
         });
         break;
       case UserAction.ADD_POINT:
+        this._newEventFormPresenter.setSaving();
         this._api.addPoint(update).then((response) => {
           this._pointsModel.addPoint(updateType, response);
         });
         break;
       case UserAction.DELETE_POINT:
+        this._eventPresenter.get(update.id).setViewState(EventPresenterViewState.DELETING);
         this._api.deletePoint(update).then(() => {
           this._pointsModel.deletePoint(updateType, update);
         });

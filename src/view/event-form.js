@@ -8,20 +8,32 @@ import flatpickr from 'flatpickr';
 
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const createEventFormButtonsTemplate = (id, isSubmitDisabled) => (
+const createEventFormButtonsTemplate = (id, isSubmitDisabled, isDisabled, isSaving, isDeleting) => (
   id
-    ? `<button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled ? 'disabled' : ''}>Save</button>
-                  <button class="event__reset-btn" type="reset">Delete</button>
+    ? `<button class="event__save-btn  btn  btn--blue" type="submit" ${(isSubmitDisabled || isDisabled) ? 'disabled' : ''}>
+${isSaving ? 'saving...' : 'save'}
+</button>
+                  <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>
+                  ${isDeleting ? 'deleting...' : 'delete'}
+</button>
                   <button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>`
-    : `<button class="event__save-btn  btn  btn--blue" type="submit" ${isSubmitDisabled ? 'disabled' : ''}>Save</button>
-                  <button class="event__reset-btn" type="reset">Cancel</button>`
+    : `<button class="event__save-btn  btn  btn--blue" type="submit" ${(isSubmitDisabled || isDisabled) ? 'disabled' : ''}>
+${isSaving ? 'saving...' : 'save'}
+</button>
+                  <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>Cancel</button>`
 );
 
-const createEventTypeItemTemplate = (eventType, isChecked) => (
+const createEventTypeItemTemplate = (eventType, isChecked, isDisabled) => (
   `<div class="event__type-item">
-                          <input id="event-type-${eventType}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType}" ${isChecked ? 'checked' : ''}>
+                          <input
+                          id="event-type-${eventType}-1"
+                          class="event__type-input  visually-hidden"
+                          type="radio" name="event-type"
+                          value="${eventType}"
+                          ${isChecked ? 'checked' : ''}
+                          ${isDisabled ? 'disabled' : ''}>
                           <label class="event__type-label  event__type-label--${eventType}" for="event-type-${eventType}-1">${eventType}</label>
                         </div>`
 );
@@ -35,9 +47,12 @@ const createEventFormTemplate = (data, towns, types) => {
     dateTo = dayjs().toDate(),
     destination = {},
     isSubmitDisabled,
+    isDisabled,
+    isSaving,
+    isDeleting,
   } = data;
   const town = destination.name ? destination.name : '';
-  const eventTypeItems = types.map((eventType) => createEventTypeItemTemplate(eventType, type === eventType)).join('');
+  const eventTypeItems = types.map((eventType) => createEventTypeItemTemplate(eventType, type === eventType), isDisabled).join('');
   const townItemTemplate = (townItem = '') => (`<option value="${townItem}"></option>`);
   const townItems = towns.map((townItem) => townItemTemplate(townItem)).join('');
   const offersComponent = new OffersView(data.offers);
@@ -45,7 +60,7 @@ const createEventFormTemplate = (data, towns, types) => {
   const offerItems = data.offers.length ? offersComponent.getTemplate() : '';
   const description = Object.keys(data.destination).length > 1 ? offersDescription.getTemplate() : '';
 
-  const formButtonsTemplate = createEventFormButtonsTemplate(id, isSubmitDisabled);
+  const formButtonsTemplate = createEventFormButtonsTemplate(id, isSubmitDisabled, isDisabled, isSaving, isDeleting);
 
   return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
@@ -55,7 +70,11 @@ const createEventFormTemplate = (data, towns, types) => {
                       <span class="visually-hidden">Choose event type</span>
                       <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="Event type icon">
                     </label>
-                    <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
+                    <input
+                    class="event__type-toggle  visually-hidden"
+                    id="event-type-toggle-1"
+                    type="checkbox"
+                    ${isDisabled ? 'disabled' : ''}>
 
                     <div class="event__type-list">
                       <fieldset class="event__type-group">
@@ -69,7 +88,14 @@ const createEventFormTemplate = (data, towns, types) => {
                     <label class="event__label  event__type-output" for="event-destination-1">
                       ${type}
                     </label>
-                    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(town)}" list="destination-list-1">
+                    <input
+                    class="event__input  event__input--destination"
+                    id="event-destination-1"
+                    type="text"
+                    name="event-destination"
+                    value="${he.encode(town)}"
+                    list="destination-list-1"
+                    ${isDisabled ? 'disabled' : ''}>
                     <datalist id="destination-list-1">
                       ${townItems}
                     </datalist>
@@ -77,10 +103,22 @@ const createEventFormTemplate = (data, towns, types) => {
 
                   <div class="event__field-group  event__field-group--time">
                     <label class="visually-hidden" for="event-start-time-1">From</label>
-                    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${dayjs(dateFrom).format('DD/MM/YY HH:mm')}">
+                    <input
+                    class="event__input  event__input--time"
+                    id="event-start-time-1"
+                    type="text"
+                    name="event-start-time"
+                    value="${dayjs(dateFrom).format('DD/MM/YY HH:mm')}"
+                    ${isDisabled ? 'disabled' : ''}>
                     &mdash;
                     <label class="visually-hidden" for="event-end-time-1">To</label>
-                    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${dayjs(dateTo).format('DD/MM/YY HH:mm')}">
+                    <input
+                    class="event__input  event__input--time"
+                    id="event-end-time-1"
+                    type="text"
+                    name="event-end-time"
+                    value="${dayjs(dateTo).format('DD/MM/YY HH:mm')}"
+                    ${isDisabled ? 'disabled' : ''}>
                   </div>
 
                   <div class="event__field-group  event__field-group--price">
@@ -88,7 +126,14 @@ const createEventFormTemplate = (data, towns, types) => {
                       <span class="visually-hidden">Price</span>
                       &euro;
                     </label>
-                    <input class="event__input  event__input--price" id="event-price-1" type="number" min="0" step="1" name="event-price" value="${basePrice}">
+                    <input
+                    class="event__input  event__input--price"
+                    id="event-price-1"
+                    type="number"
+                    min="0" step="1"
+                    name="event-price"
+                    value="${basePrice}"
+                    ${isDisabled ? 'disabled' : ''}>
                   </div>
 
                   ${formButtonsTemplate}

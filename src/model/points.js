@@ -59,16 +59,32 @@ export default class Points extends AbstractObserver {
   }
 
   parsePointToData(point) {
-    const data = Object.assign({}, JSON.parse(JSON.stringify(point)));
+    const data = Object.assign(
+      {},
+      JSON.parse(JSON.stringify(point)),
+      {
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      },
+    );
     data.dateFrom = dayjs(data.dateFrom).toDate();
     data.dateTo = dayjs(data.dateTo).toDate();
     return data;
   }
 
   parseDataToPoint(data) {
-    const point = Object.assign({}, JSON.parse(JSON.stringify(data)));
+    console.log(data);
+    console.log(JSON.parse(JSON.stringify(data)));
+    const point = JSON.parse(JSON.stringify(data));
+    console.log(point);
     point.dateFrom = dayjs(point.dateFrom).toDate();
     point.dateTo = dayjs(point.dateTo).toDate();
+    console.log(point);
+
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
     return point;
   }
 

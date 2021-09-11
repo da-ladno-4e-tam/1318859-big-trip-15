@@ -8,6 +8,11 @@ const Mode = {
   EDITING: 'EDITING',
 };
 
+export const State = {
+  SAVING: 'SAVING',
+  DELETING: 'DELETING',
+};
+
 export default class Event {
   constructor(eventsContainer, changeData, changeMode, offersModel, destinationsModel, pointsModel) {
     this._eventsContainer = eventsContainer;
@@ -59,6 +64,27 @@ export default class Event {
     }
   }
 
+  setViewState(state) {
+    if (this._mode === Mode.DEFAULT) {
+      return;
+    }
+
+    switch (state) {
+      case State.SAVING:
+        this._eventFormComponent.updateData({
+          isDisabled: true,
+          isSaving: true,
+        });
+        break;
+      case State.DELETING:
+        this._eventFormComponent.updateData({
+          isDisabled: true,
+          isDeleting: true,
+        });
+        break;
+    }
+  }
+
   _reinit(prevEventComponent, prevEventFormComponent) {
     if (prevEventComponent === null || prevEventFormComponent === null) {
       render(this._eventsContainer, this._eventComponent, RenderPosition.BEFOREEND);
@@ -69,7 +95,8 @@ export default class Event {
       replace(this._eventComponent, prevEventComponent);
     }
     if (this._mode === Mode.EDITING) {
-      replace(this._eventFormComponent, prevEventFormComponent);
+      replace(this._eventComponent, prevEventFormComponent);
+      this._mode = Mode.DEFAULT;
     }
 
     remove(prevEventComponent);
@@ -110,7 +137,7 @@ export default class Event {
       UserAction.UPDATE_POINT,
       isMajorUpdate ? UpdateType.MAJOR : UpdateType.MINOR,
       update);
-    this._replaceFormToEvent();
+    // this._replaceFormToEvent();
   }
 
   _handleFormEsc() {
