@@ -1,5 +1,8 @@
 import dayjs from 'dayjs';
 
+export const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
+export const AUTHORIZATION = 'Basic daladno4etamschasvsyobudet';
+
 export const NEW_POINT = {
   type: 'bus',
   basePrice: 1,
@@ -43,6 +46,3 @@ export const MenuItem = {
   POINTS: 'POINTS',
   STATISTICS: 'STATISTICS',
 };
-
-export const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
-export const AUTHORIZATION = 'Basic daladno4etamschasvsyobudet';

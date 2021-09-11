@@ -5,7 +5,6 @@ import {generateOffersList} from '../utils/common.js';
 import OffersView from './offers.js';
 import DestinationView from './destination.js';
 import flatpickr from 'flatpickr';
-
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
 const createEventFormButtonsTemplate = (id, isSubmitDisabled, isDisabled, isSaving, isDeleting) => (
@@ -162,8 +161,6 @@ export default class EventForm extends SmartView {
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._editClickHandler = this._editClickHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
-
-
     this._typeToggleHandler = this._typeToggleHandler.bind(this);
     this._townToggleHandler = this._townToggleHandler.bind(this);
     this._priceInputHandler = this._priceInputHandler.bind(this);

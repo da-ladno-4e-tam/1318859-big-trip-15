@@ -134,7 +134,6 @@ export default class Points extends AbstractObserver {
           }),
       },
     );
-    // Ненужные ключи мы удаляем
     delete adaptedPoint.dateFrom;
     delete adaptedPoint.dateTo;
     delete adaptedPoint.basePrice;

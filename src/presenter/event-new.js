@@ -67,7 +67,6 @@ export default class NewEventForm {
       UpdateType.MAJOR,
       point,
     );
-    // this.destroy();
     document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
   }
 

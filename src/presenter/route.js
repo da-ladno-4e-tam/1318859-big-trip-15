@@ -21,10 +21,8 @@ export default class Route {
     this._filterType = FilterType.EVERYTHING;
     this._isLoading = true;
     this._api = api;
-
     this._sortComponent = null;
     this._noEventsComponent = null;
-
     this._eventsListViewComponent = new EventsListView();
     this._newEventButtonComponent = new NewEventButtonView();
     this._loadingComponent = new LoadingView();
@@ -48,6 +46,7 @@ export default class Route {
     this._filterModel.addObserver(this._handleModelEvent);
 
     this._renderRoute();
+
     this._newEventButtonComponent.setNewPointClickHandler();
   }
 
@@ -101,7 +100,14 @@ export default class Route {
   }
 
   _renderEvent(point) {
-    const eventPresenter = new EventPresenter(this._eventsListViewComponent, this._handleViewAction, this._handleModeChange, this._offersModel, this._destinationsModel, this._pointsModel);
+    const eventPresenter = new EventPresenter(
+      this._eventsListViewComponent,
+      this._handleViewAction,
+      this._handleModeChange,
+      this._offersModel,
+      this._destinationsModel,
+      this._pointsModel
+    );
     eventPresenter.init(point);
     this._eventPresenter.set(point.id, eventPresenter);
   }

@@ -22,22 +22,16 @@ const tripInfoContainer = headerElement.querySelector('.trip-main');
 const menuContainer = headerElement.querySelector('.trip-controls__navigation');
 const filtersContainer = headerElement.querySelector('.trip-controls__filters');
 const mainContentContainer = mainElement.querySelector('.trip-events');
-
 const api = new Api(END_POINT, AUTHORIZATION);
-
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
 const pointsModel = new PointsModel();
 const filterModel = new FilterModel();
-
 const menuComponent = new MenuView();
 
 const newEventButton = new NewEventButtonView();
 const tripInfoSection = new TripInfoSectionView();
 const tripInfoMain = new TripInfoMainView();
-
-render(tripInfoContainer, tripInfoSection, RenderPosition.AFTERBEGIN);
-render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
 
 const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, offersModel, destinationsModel, filterModel, api);
 const filterPresenter = new FilterPresenter(filtersContainer, filterModel, pointsModel);
@@ -68,8 +62,6 @@ const handleNewPointClick = () => {
   document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
 };
 
-routePresenter.init();
-
 const offersPromise = api.getOffers()
   .then((offers) => {
     offersModel.setOffers(offers);
@@ -94,9 +86,15 @@ const destinationsPromise = api.getDestinations()
     destinationsModel.setDestinations([]);
   });
 
+render(tripInfoContainer, tripInfoSection, RenderPosition.AFTERBEGIN);
+render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
+
+routePresenter.init();
+
 Promise.all([offersPromise, destinationsPromise, pointsPromise])
-  .then(() => {
-    PointsModel.adaptToClient();
+.then(() => {
+  console.log('111');
+  PointsModel.adaptToClient();
     const tripTowns = points.map((point) => point.destination.name);
     const startDates = points.map((point) => point.dateFrom);
     const finishDates = points.map((point) => point.dateTo);
@@ -111,6 +109,7 @@ Promise.all([offersPromise, destinationsPromise, pointsPromise])
     menuComponent.setMenuClickHandler(handleSiteMenuClick);
   })
   .catch(() => {
+    console.log('222');
     render(tripInfoContainer, newEventButton, RenderPosition.BEFOREEND);
     render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
     filterPresenter.init();
