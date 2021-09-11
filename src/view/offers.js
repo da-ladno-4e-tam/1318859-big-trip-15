@@ -1,7 +1,7 @@
 import AbstractView from './abstract.js';
 
 const createOffersTemplate = (offers) => {
-  const formOfferTemplate = (offer = {}, i) => {
+  const createFormOfferTemplate = (offer = {}, i) => {
     const isChecked = (offer.isAdded) ? 'checked' : '';
     const offerTitle = offer.title ? offer.title : '';
     const offerPrice = offer.price ? offer.price : 0;
@@ -15,7 +15,7 @@ const createOffersTemplate = (offers) => {
                         </label>
                       </div>`;
   };
-  const formOffersList = (offers.length) ? offers.map((offer, i) => formOfferTemplate(offer, i )).join('') : '';
+  const formOffersList = (offers.length) ? offers.map((offer, i) => createFormOfferTemplate(offer, i )).join('') : '';
   return `<section class="event__section  event__section--offers">
                     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 

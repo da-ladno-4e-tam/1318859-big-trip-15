@@ -53,8 +53,8 @@ const createEventFormTemplate = (data, towns, types) => {
   } = data;
   const town = destination.name ? destination.name : '';
   const eventTypeItems = types.map((eventType) => createEventTypeItemTemplate(eventType, type === eventType), isDisabled).join('');
-  const townItemTemplate = (townItem = '') => (`<option value="${townItem}"></option>`);
-  const townItems = towns.map((townItem) => townItemTemplate(townItem)).join('');
+  const createTownItemTemplate = (townItem = '') => (`<option value="${townItem}"></option>`);
+  const townItems = towns.map((townItem) => createTownItemTemplate(townItem)).join('');
   const offersComponent = new OffersView(data.offers);
   const offersDescription = new DestinationView(data.destination);
   const offerItems = data.offers.length ? offersComponent.getTemplate() : '';
@@ -130,7 +130,7 @@ const createEventFormTemplate = (data, towns, types) => {
                     class="event__input  event__input--price"
                     id="event-price-1"
                     type="number"
-                    min="0" step="1"
+                    min="1" step="1"
                     name="event-price"
                     value="${basePrice}"
                     ${isDisabled ? 'disabled' : ''}>

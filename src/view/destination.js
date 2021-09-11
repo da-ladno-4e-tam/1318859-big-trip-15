@@ -6,13 +6,13 @@ const createDestinationTemplate = (destination) => {
     pictures = [],
   } = destination;
 
-  const destinationPictureTemplate = (picture = {}) => {
+  const createDestinationPictureTemplate = (picture = {}) => {
     const src = picture.src ? picture.src : '';
     const pictureDescription = picture.description ? picture.description : '';
 
     return `<img class="event__photo" src="${src}" alt="${pictureDescription}">`;
   };
-  const destinationGallery = pictures.map((picture) => destinationPictureTemplate(picture)).join('');
+  const destinationGallery = pictures.map((picture) => createDestinationPictureTemplate(picture)).join('');
 
   return `<section class="event__section  event__section--destination">
                   <h3 class="event__section-title  event__section-title--destination">Destination</h3>

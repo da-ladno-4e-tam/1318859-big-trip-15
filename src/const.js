@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 export const NEW_POINT = {
   type: 'bus',
-  basePrice: 0,
+  basePrice: 1,
   dateFrom: dayjs().toDate(),
   dateTo: dayjs().toDate(),
   offers: [

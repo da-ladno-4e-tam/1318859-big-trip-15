@@ -4,7 +4,7 @@ import timezone from 'dayjs/plugin/timezone';
 import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import SmartView from './smart.js';
-import {tripDurationFormat} from '../utils/common.js';
+import {getTripDurationFormat} from '../utils/common.js';
 import {countAllEvents, makeItemsUniq, countPointsByType, countMoneyOfPointsByType, countTimeOfPointsByType} from '../utils/statistics.js';
 
 dayjs.extend(utc);
@@ -181,7 +181,7 @@ const renderTimeChart = (timeCtx, points) => {
           color: '#000000',
           anchor: 'end',
           align: 'start',
-          formatter: (val) => `${dayjs.utc(val).format(tripDurationFormat(val / 60000))}`,
+          formatter: (val) => `${dayjs.utc(val).format(getTripDurationFormat(val / 60000))}`,
         },
       },
       title: {
