@@ -11,6 +11,7 @@ const Mode = {
 export const State = {
   SAVING: 'SAVING',
   DELETING: 'DELETING',
+  ABORTING: 'ABORTING',
 };
 
 export default class Event {
@@ -69,6 +70,14 @@ export default class Event {
       return;
     }
 
+    const resetFormState = () => {
+      this._eventFormComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
     switch (state) {
       case State.SAVING:
         this._eventFormComponent.updateData({
@@ -81,6 +90,10 @@ export default class Event {
           isDisabled: true,
           isDeleting: true,
         });
+        break;
+      case State.ABORTING:
+        this._eventComponent.shake(resetFormState);
+        this._eventFormComponent.shake(resetFormState);
         break;
     }
   }

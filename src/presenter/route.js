@@ -127,21 +127,33 @@ export default class Route {
       case UserAction.UPDATE_POINT:
         this._eventPresenter.get(update.id).setViewState(EventPresenterViewState.SAVING);
         console.log(update);
-        this._api.updatePoint(update).then((response) => {
-          this._pointsModel.updatePoint(updateType, response);
-        });
+        this._api.updatePoint(update)
+          .then((response) => {
+            this._pointsModel.updatePoint(updateType, response);
+          })
+          .catch(() => {
+            this._eventPresenter.get(update.id).setViewState(EventPresenterViewState.ABORTING);
+          });
         break;
       case UserAction.ADD_POINT:
         this._newEventFormPresenter.setSaving();
-        this._api.addPoint(update).then((response) => {
-          this._pointsModel.addPoint(updateType, response);
-        });
+        this._api.addPoint(update)
+          .then((response) => {
+            this._pointsModel.addPoint(updateType, response);
+          })
+          .catch(() => {
+            this._newEventFormPresenter.setAborting();
+          });
         break;
       case UserAction.DELETE_POINT:
         this._eventPresenter.get(update.id).setViewState(EventPresenterViewState.DELETING);
-        this._api.deletePoint(update).then(() => {
-          this._pointsModel.deletePoint(updateType, update);
-        });
+        this._api.deletePoint(update)
+          .then(() => {
+            this._pointsModel.deletePoint(updateType, update);
+          })
+          .catch(() => {
+            this._eventPresenter.get(update.id).setViewState(EventPresenterViewState.ABORTING);
+          });
         break;
     }
   }

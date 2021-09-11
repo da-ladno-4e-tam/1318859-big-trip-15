@@ -49,6 +49,18 @@ export default class NewEventForm {
     });
   }
 
+  setAborting() {
+    const resetFormState = () => {
+      this._eventFormComponent.updateData({
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
+      });
+    };
+
+    this._eventFormComponent.shake(resetFormState);
+  }
+
   _handleFormSubmit(point) {
     this._changeData(
       UserAction.ADD_POINT,
