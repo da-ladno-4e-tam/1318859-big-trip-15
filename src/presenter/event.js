@@ -120,6 +120,7 @@ export default class Event {
     replace(this._eventFormComponent, this._eventComponent);
     document.addEventListener('keydown', this._escKeyDownHandler);
     this._changeMode();
+    document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
     this._mode = Mode.EDITING;
   }
 
