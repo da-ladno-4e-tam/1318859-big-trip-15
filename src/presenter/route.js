@@ -106,7 +106,7 @@ export default class Route {
       this._handleModeChange,
       this._offersModel,
       this._destinationsModel,
-      this._pointsModel
+      this._pointsModel,
     );
     eventPresenter.init(point);
     this._eventPresenter.set(point.id, eventPresenter);
@@ -171,14 +171,10 @@ export default class Route {
         this._eventPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        /*        this._clearHeader({resetSortType: true});
-                this._renderHeader();*/
-        this._eventPresenter.get(data.id).init(data);
+        this._clearRoute();
+        this._renderRoute();
         break;
       case UpdateType.MAJOR:
-        /*        this._clearHeader({resetSortType: true});
-                this._renderHeader();*/
-        // фильтры
         this._clearRoute({resetSortType: true});
         this._renderRoute();
         break;

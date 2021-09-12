@@ -142,16 +142,10 @@ export default class Event {
   }
 
   _handleFormSubmit(update) {
-    // Проверяем, поменялись ли в задаче данные, которые попадают под фильтрацию,
-    // а значит требуют перерисовки списка - если таких нет, это MINOR-обновление
-    const isMajorUpdate =
-      this._point.dateFrom !== update.dateFrom ||
-      this._point.dateTo !== update.dateTo;
     this._changeData(
       UserAction.UPDATE_POINT,
-      isMajorUpdate ? UpdateType.MAJOR : UpdateType.MINOR,
+      UpdateType.MINOR,
       update);
-    // this._replaceFormToEvent();
   }
 
   _handleFormEsc() {

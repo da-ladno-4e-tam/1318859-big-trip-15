@@ -12,7 +12,7 @@ import OffersModel from './model/offers.js';
 import DestinationsModel from './model/destinations.js';
 import PointsModel from './model/points.js';
 import FilterModel from './model/filter.js';
-import {MenuItem, UpdateType, END_POINT, AUTHORIZATION} from './const.js';
+import {MenuItem, UpdateType, FilterType, END_POINT, AUTHORIZATION} from './const.js';
 import Api from './api.js';
 import {render, RenderPosition, remove} from './utils/render.js';
 
@@ -57,6 +57,12 @@ const handleSiteMenuClick = (menuItem) => {
 };
 
 const handleNewPointClick = () => {
+
+  remove(statisticsComponent);
+  routePresenter.destroy();
+  filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
+  routePresenter.init();
+
   routePresenter.createPoint();
   document.querySelector('.event__save-btn').setAttribute('disabled', 'disabled');
   document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
