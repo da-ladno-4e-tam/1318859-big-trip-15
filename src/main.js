@@ -92,9 +92,8 @@ render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
 routePresenter.init();
 
 Promise.all([offersPromise, destinationsPromise, pointsPromise])
-.then(() => {
-  console.log('111');
-  PointsModel.adaptToClient();
+  .then(() => {
+    PointsModel.adaptToClient();
     const tripTowns = points.map((point) => point.destination.name);
     const startDates = points.map((point) => point.dateFrom);
     const finishDates = points.map((point) => point.dateTo);
@@ -109,7 +108,6 @@ Promise.all([offersPromise, destinationsPromise, pointsPromise])
     menuComponent.setMenuClickHandler(handleSiteMenuClick);
   })
   .catch(() => {
-    console.log('222');
     render(tripInfoContainer, newEventButton, RenderPosition.BEFOREEND);
     render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
     filterPresenter.init();
