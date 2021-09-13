@@ -22,13 +22,13 @@ const createEventTemplate = (point) => {
   const favoriteActiveClass = isFavorite ? 'event__favorite-btn--active' : '';
   const tripDuration = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
 
-  const createActiveOfferTemplate = (title, price, isAdded) => (isAdded ? `<li class="event__offer">
+  const createActiveOfferTemplate = (title, price) => (`<li class="event__offer">
                     <span class="event__offer-title">${title}</span>
                     &plus;&euro;&nbsp;
                     <span class="event__offer-price">${price}</span>
-                  </li>` : '');
+                  </li>`);
 
-  const activeOffers = (offers && offers.length) ? offers.map((offer) => createActiveOfferTemplate(offer.title, offer.price, offer.isAdded)).join('') : '';
+  const activeOffers = (offers && offers.length) ? offers.map((offer) => createActiveOfferTemplate(offer.title, offer.price)).join('') : '';
 
   return `<li class="trip-events__item">
               <div class="event">
