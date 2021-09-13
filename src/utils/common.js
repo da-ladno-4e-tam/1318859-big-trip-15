@@ -9,9 +9,3 @@ export const getTripDurationFormat = (tripDuration) => {
     return 'mm[M]';
   }
 };
-
-export const generateOffersList = (offers, offerType) => {
-  const typeOffers = offers.find((item) => item['type'] === offerType).offers;
-  typeOffers.forEach((offer) => offer.isAdded = false);
-  return typeOffers;
-};
