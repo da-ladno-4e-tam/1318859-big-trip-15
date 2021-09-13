@@ -1,6 +1,5 @@
 import AbstractObserver from '../utils/abstract-observer.js';
 import dayjs from 'dayjs';
-import {offers} from '../mock/task.js';
 
 export default class Points extends AbstractObserver {
   constructor() {
@@ -74,13 +73,9 @@ export default class Points extends AbstractObserver {
   }
 
   parseDataToPoint(data) {
-    console.log(data);
-    console.log(JSON.parse(JSON.stringify(data)));
     const point = JSON.parse(JSON.stringify(data));
-    console.log(point);
     point.dateFrom = dayjs(point.dateFrom).toDate();
     point.dateTo = dayjs(point.dateTo).toDate();
-    console.log(point);
 
     delete data.isDisabled;
     delete data.isSaving;
@@ -89,15 +84,6 @@ export default class Points extends AbstractObserver {
   }
 
   static adaptToClient(point) {
-    // const offers = offersModel.getOffers();
-    const pointOffers = offers
-      .find((offer) => offer.type === point.type).offers
-      .map((offer) => {
-        delete offer.isAdded;
-        offer.isAdded = JSON.stringify(point.offers).indexOf(JSON.stringify(offer)) !== -1;
-        return offer;
-      });
-
     const adaptedPoint = Object.assign(
       {},
       point,
@@ -106,10 +92,8 @@ export default class Points extends AbstractObserver {
         dateTo: dayjs(point['date_to']).toDate(),
         basePrice: point['base_price'],
         isFavorite: point['is_favorite'],
-        offers: pointOffers,
       },
     );
-    // Ненужные ключи мы удаляем
     delete adaptedPoint['date_from'];
     delete adaptedPoint['date_to'];
     delete adaptedPoint['base_price'];
@@ -127,11 +111,6 @@ export default class Points extends AbstractObserver {
         'date_to': point.dateTo.toISOString(),
         'base_price': point.basePrice,
         'is_favorite': point.isFavorite,
-        'offers': point.offers
-          .filter((offer) => offer.isAdded)
-          .map((offer) => {
-            delete offer.isAdded;
-          }),
       },
     );
     delete adaptedPoint.dateFrom;

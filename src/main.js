@@ -78,9 +78,11 @@ const offersPromise = api.getOffers()
 
 const pointsPromise = api.getPoints()
   .then((points) => {
+    console.log(points);
     pointsModel.setPoints(UpdateType.INIT, points);
   })
   .catch(() => {
+    console.log('error');
     pointsModel.setPoints(UpdateType.INIT, []);
   });
 

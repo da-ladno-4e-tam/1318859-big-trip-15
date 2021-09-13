@@ -1,7 +1,6 @@
 import he from 'he';
 import dayjs from 'dayjs';
 import SmartView from './smart.js';
-import {generateOffersList} from '../utils/common.js';
 import OffersView from './offers.js';
 import DestinationView from './destination.js';
 import flatpickr from 'flatpickr';
@@ -37,7 +36,7 @@ const createEventTypeItemTemplate = (eventType, isChecked, isDisabled) => (
                         </div>`
 );
 
-const createEventFormTemplate = (data, towns, types) => {
+const createEventFormTemplate = (data, towns, types, offers, point) => {
   const {
     type = '',
     id = 0,
@@ -54,9 +53,9 @@ const createEventFormTemplate = (data, towns, types) => {
   const eventTypeItems = types.map((eventType) => createEventTypeItemTemplate(eventType, type === eventType), isDisabled).join('');
   const createTownItemTemplate = (townItem = '') => (`<option value="${townItem}"></option>`);
   const townItems = towns.map((townItem) => createTownItemTemplate(townItem)).join('');
-  const offersComponent = new OffersView(data.offers);
+  const offersComponent = new OffersView(offers, point);
   const offersDescription = new DestinationView(data.destination);
-  const offerItems = data.offers.length ? offersComponent.getTemplate() : '';
+  const offerItems = offers.length ? offersComponent.getTemplate() : '';
   const description = Object.keys(data.destination).length > 1 ? offersDescription.getTemplate() : '';
 
   const formButtonsTemplate = createEventFormButtonsTemplate(id, isSubmitDisabled, isDisabled, isSaving, isDeleting);
@@ -152,8 +151,10 @@ export default class EventForm extends SmartView {
     this._offersModel = offersModel;
     this._destinationsModel = destinationsModel;
     this._pointsModel = pointsModel;
+    this._point = point;
     this._towns = this._destinationsModel.getDestinations().map((item) => item['name']);
     this._types = this._offersModel.getOffers().map((item) => item['type']);
+    this._offers = this._offersModel.getOffers().find((item) => item.type === point.type).offers;
     this._data = this._pointsModel.parsePointToData(point);
     this._dateFromPicker = null;
     this._dateToPicker = null;
@@ -173,8 +174,6 @@ export default class EventForm extends SmartView {
     this._setDateToPicker();
   }
 
-  // Перегружаем метод родителя removeElement,
-  // чтобы при удалении удалялся более ненужный календарь
   removeElement() {
     super.removeElement();
 
@@ -196,7 +195,7 @@ export default class EventForm extends SmartView {
   }
 
   getTemplate() {
-    return createEventFormTemplate(this._data, this._towns, this._types);
+    return createEventFormTemplate(this._data, this._towns, this._types, this._offers, this._point);
   }
 
   restoreHandlers() {
@@ -277,12 +276,16 @@ export default class EventForm extends SmartView {
 
   _offerChangeHandler(evt) {
     evt.preventDefault();
-    const changedElementIndex = Number(evt.target.dataset.index);
+    // const changedElementId = evt.target.id;
+    // console.log(evt.target.id);
+    // this._data.offers.push(this._offers[changedElementId]);
     this.updateData({
       offers: Object.assign(
         [],
+        [],
         this._data.offers,
-        this._data.offers[changedElementIndex].isAdded = evt.target.checked,
+        // this._data.offers,
+        // this._data.offers[changedElementId].isAdded = evt.target.checked,
       ),
     });
   }
@@ -301,7 +304,7 @@ export default class EventForm extends SmartView {
       offers: Object.assign(
         [],
         [],
-        generateOffersList(this._offersModel.getOffers(), evt.target.value),
+        this._offers,
       ),
     });
   }
