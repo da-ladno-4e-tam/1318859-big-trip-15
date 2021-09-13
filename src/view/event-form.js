@@ -276,16 +276,20 @@ export default class EventForm extends SmartView {
 
   _offerChangeHandler(evt) {
     evt.preventDefault();
-    // const changedElementId = evt.target.id;
-    // console.log(evt.target.id);
-    // this._data.offers.push(this._offers[changedElementId]);
+    console.log(evt);
+    const updatedOffers = [];
+    const offerIndex = this._data.offers.map((offerItem) => offerItem.title).indexOf(evt.target.id);
+    if (offerIndex !== -1) {
+      evt.target.removeAttribute('checked');
+      updatedOffers.splice(offerIndex);
+    } else {
+      evt.target.setAttribute('checked', 'checked');
+      updatedOffers.push(this._offers.find((offerItem) => offerItem.title === evt.target.id));
+    }
     this.updateData({
       offers: Object.assign(
         [],
-        [],
-        this._data.offers,
-        // this._data.offers,
-        // this._data.offers[changedElementId].isAdded = evt.target.checked,
+        updatedOffers,
       ),
     });
   }
@@ -299,12 +303,12 @@ export default class EventForm extends SmartView {
 
   _typeToggleHandler(evt) {
     evt.preventDefault();
+    const updOffers = this._offersModel.getOffers().find((item) => item.type === evt.target.value).offers;
     this.updateData({
       type: evt.target.value,
       offers: Object.assign(
         [],
-        [],
-        this._offers,
+        updOffers,
       ),
     });
   }

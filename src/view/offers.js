@@ -2,10 +2,7 @@ import AbstractView from './abstract.js';
 
 const createOffersTemplate = (offersList, checkedOffersList) => {
   const createFormOfferTemplate = (offer = {}, id) => {
-    const isChecked = (checkedOffersList.includes(offer)) ? 'checked' : '';
-/*    console.log(checkedOffersList);
-    console.log(offer);
-    console.log(isChecked);*/
+    const isChecked = (checkedOffersList.map((offerItem) => offerItem.title).includes(offer.title)) ? 'checked' : '';
     const offerTitle = offer.title ? offer.title : '';
     const offerPrice = offer.price ? offer.price : 0;
 

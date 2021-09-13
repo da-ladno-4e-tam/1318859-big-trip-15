@@ -68,31 +68,9 @@ const handleNewPointClick = () => {
   document.querySelector('.trip-main__event-add-btn').setAttribute('disabled', 'disabled');
 };
 
-const offersPromise = api.getOffers()
-  .then((offers) => {
-    offersModel.setOffers(offers);
-  })
-  .catch(() => {
-    offersModel.setOffers([]);
-  });
-
-const pointsPromise = api.getPoints()
-  .then((points) => {
-    console.log(points);
-    pointsModel.setPoints(UpdateType.INIT, points);
-  })
-  .catch(() => {
-    console.log('error');
-    pointsModel.setPoints(UpdateType.INIT, []);
-  });
-
-const destinationsPromise = api.getDestinations()
-  .then((destinations) => {
-    destinationsModel.setDestinations(destinations);
-  })
-  .catch(() => {
-    destinationsModel.setDestinations([]);
-  });
+const offersPromise = api.getOffers();
+const pointsPromise = api.getPoints();
+const destinationsPromise = api.getDestinations();
 
 render(tripInfoContainer, tripInfoSection, RenderPosition.AFTERBEGIN);
 render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
@@ -100,8 +78,11 @@ render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
 routePresenter.init();
 
 Promise.all([offersPromise, destinationsPromise, pointsPromise])
-  .then(() => {
-    PointsModel.adaptToClient();
+  .then(([offers, destinations, points]) => {
+    offersModel.setOffers(offers);
+    destinationsModel.setDestinations(destinations);
+    pointsModel.setPoints(UpdateType.INIT, points);
+
     const tripTowns = points.map((point) => point.destination.name);
     const startDates = points.map((point) => point.dateFrom);
     const finishDates = points.map((point) => point.dateTo);
@@ -115,7 +96,8 @@ Promise.all([offersPromise, destinationsPromise, pointsPromise])
     newEventButton.setNewPointClickHandler(handleNewPointClick);
     menuComponent.setMenuClickHandler(handleSiteMenuClick);
   })
-  .catch(() => {
+  .catch((e) => {
+    console.log('ERRRRRORRRR!!!!', e);
     render(tripInfoContainer, newEventButton, RenderPosition.BEFOREEND);
     render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
     filterPresenter.init();
