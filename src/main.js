@@ -25,7 +25,7 @@ const mainContentContainer = mainElement.querySelector('.trip-events');
 const api = new Api(END_POINT, AUTHORIZATION);
 const offersModel = new OffersModel();
 const destinationsModel = new DestinationsModel();
-const pointsModel = new PointsModel();
+const pointsModel = new PointsModel(offersModel);
 const filterModel = new FilterModel();
 const menuComponent = new MenuView();
 

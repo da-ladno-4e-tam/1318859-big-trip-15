@@ -2,9 +2,10 @@ import AbstractObserver from '../utils/abstract-observer.js';
 import dayjs from 'dayjs';
 
 export default class Points extends AbstractObserver {
-  constructor() {
+  constructor(offersModel) {
     super();
     this._points = [];
+    this._offersModel = offersModel;
   }
 
   setPoints(updateType, points) {
@@ -65,6 +66,7 @@ export default class Points extends AbstractObserver {
         isDisabled: false,
         isSaving: false,
         isDeleting: false,
+        offersList: this._offersModel.getOffers().find((item) => item.type === point.type).offers,
       },
     );
     data.dateFrom = dayjs(data.dateFrom).toDate();
@@ -80,6 +82,7 @@ export default class Points extends AbstractObserver {
     delete data.isDisabled;
     delete data.isSaving;
     delete data.isDeleting;
+    delete data.offersList;
     return point;
   }
 

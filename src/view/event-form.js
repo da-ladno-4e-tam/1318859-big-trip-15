@@ -48,12 +48,13 @@ const createEventFormTemplate = (data, towns, types, offers, point) => {
     isDisabled,
     isSaving,
     isDeleting,
+    offersList,
   } = data;
   const town = destination.name ? destination.name : '';
   const eventTypeItems = types.map((eventType) => createEventTypeItemTemplate(eventType, type === eventType), isDisabled).join('');
   const createTownItemTemplate = (townItem = '') => (`<option value="${townItem}"></option>`);
   const townItems = towns.map((townItem) => createTownItemTemplate(townItem)).join('');
-  const offersComponent = new OffersView(offers, point);
+  const offersComponent = new OffersView(offersList, point);
   const offersDescription = new DestinationView(data.destination);
   const offerItems = offers.length ? offersComponent.getTemplate() : '';
   const description = Object.keys(data.destination).length > 1 ? offersDescription.getTemplate() : '';
@@ -303,13 +304,9 @@ export default class EventForm extends SmartView {
 
   _typeToggleHandler(evt) {
     evt.preventDefault();
-    const updOffers = this._offersModel.getOffers().find((item) => item.type === evt.target.value).offers;
     this.updateData({
       type: evt.target.value,
-      offers: Object.assign(
-        [],
-        updOffers,
-      ),
+      offersList: this._offersModel.getOffers().find((item) => item.type === evt.target.value).offers,
     });
   }
 
