@@ -7,7 +7,7 @@ export const NEW_POINT = {
   type: 'bus',
   basePrice: 1,
   dateFrom: dayjs().toDate(),
-  dateTo: dayjs().toDate(),
+  dateTo: dayjs().add(1, 'hour').toDate(),
   offers: [],
   destination: {},
   isFavorite: false,
