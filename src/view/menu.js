@@ -36,7 +36,6 @@ export default class Menu extends AbstractView {
     Array.from(items).forEach((menuTab) => menuTab.classList.remove('trip-tabs__btn--active'));
 
     if (item !== null) {
-      // item.checked = true;
       item.classList.add('trip-tabs__btn--active');
     }
   }

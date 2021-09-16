@@ -132,7 +132,6 @@ export default class Route {
     switch (actionType) {
       case UserAction.UPDATE_POINT:
         this._eventPresenter.get(update.id).setViewState(EventPresenterViewState.SAVING);
-        console.log(update);
         this._api.updatePoint(update)
           .then((response) => {
             this._pointsModel.updatePoint(updateType, response);
@@ -165,7 +164,6 @@ export default class Route {
   }
 
   _handleModelEvent(updateType, data) {
-    console.log(updateType, data);
     switch (updateType) {
       case UpdateType.PATCH:
         this._eventPresenter.get(data.id).init(data);
