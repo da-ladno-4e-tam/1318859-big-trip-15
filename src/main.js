@@ -1,10 +1,5 @@
 import MenuView from './view/menu.js';
 import NewEventButtonView from './view/new-event-button.js';
-// import TripInfoSectionView from './view/trip-info-section.js';
-// import TripInfoMainView from './view/trip-info-main.js';
-// import TripTitleView from './view/trip-title.js';
-// import TripDatesView from './view/trip-dates.js';
-// import TripCostView from './view/trip-cost.js';
 import StatisticsView from './view/statistics.js';
 import RoutePresenter from './presenter/route.js';
 import FilterPresenter from './presenter/filter.js';
@@ -28,11 +23,7 @@ const destinationsModel = new DestinationsModel();
 const pointsModel = new PointsModel(offersModel);
 const filterModel = new FilterModel();
 const menuComponent = new MenuView();
-
 const newEventButton = new NewEventButtonView();
-// const tripInfoSection = new TripInfoSectionView();
-// const tripInfoMain = new TripInfoMainView();
-
 const routePresenter = new RoutePresenter(mainContentContainer, pointsModel, offersModel, destinationsModel, filterModel, api);
 const filterPresenter = new FilterPresenter(filtersContainer, filterModel, pointsModel);
 
@@ -72,9 +63,6 @@ const offersPromise = api.getOffers();
 const pointsPromise = api.getPoints();
 const destinationsPromise = api.getDestinations();
 
-// render(tripInfoContainer, tripInfoSection, RenderPosition.AFTERBEGIN);
-// render(tripInfoSection, tripInfoMain, RenderPosition.AFTERBEGIN);
-
 routePresenter.init();
 
 Promise.all([offersPromise, destinationsPromise, pointsPromise])
@@ -83,14 +71,7 @@ Promise.all([offersPromise, destinationsPromise, pointsPromise])
     destinationsModel.setDestinations(destinations);
     pointsModel.setPoints(UpdateType.INIT, points);
 
-    // const tripTowns = points.map((point) => point.destination.name);
-    // const startDates = points.map((point) => point.dateFrom);
-    // const finishDates = points.map((point) => point.dateTo);
-
     render(tripInfoContainer, newEventButton, RenderPosition.BEFOREEND);
-    // render(tripInfoSection, new TripCostView(points), RenderPosition.BEFOREEND);
-    // render(tripInfoMain, new TripTitleView(tripTowns), RenderPosition.BEFOREEND);
-    // render(tripInfoMain, new TripDatesView(startDates, finishDates), RenderPosition.BEFOREEND);
     render(menuContainer, menuComponent, RenderPosition.BEFOREEND);
     filterPresenter.init();
     newEventButton.setNewPointClickHandler(handleNewPointClick);
