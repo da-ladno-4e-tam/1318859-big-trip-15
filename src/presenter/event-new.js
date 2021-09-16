@@ -21,7 +21,6 @@ export default class NewEventForm {
     if (this._eventFormComponent !== null) {
       return;
     }
-
     this._eventFormComponent = new EventFormView(NEW_POINT, this._offersModel, this._destinationsModel, this._pointsModel);
     this._eventFormComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventFormComponent.setDeleteClickHandler(this._handleDeleteClick);

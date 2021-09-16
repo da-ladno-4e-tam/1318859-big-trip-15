@@ -31,7 +31,6 @@ export default class Route {
     this._handleModelEvent = this._handleModelEvent.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
     this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
-
     this._newEventFormPresenter = new NewEventFormPresenter(
       this._eventsListViewComponent,
       this._handleViewAction,
@@ -217,6 +216,7 @@ export default class Route {
     const pointCount = points.length;
 
     if (pointCount === 0) {
+      render(this._routeContainer, this._eventsListViewComponent, RenderPosition.BEFOREEND);
       this._renderNoEvents();
     } else {
       this._renderSort();

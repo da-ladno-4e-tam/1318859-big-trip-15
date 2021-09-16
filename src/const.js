@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-export const END_POINT = 'https://14.ecmascript.pages.academy/big-trip';
+export const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 export const AUTHORIZATION = 'Basic daladno4etamschasvsyobudet';
 
 export const NEW_POINT = {
@@ -8,11 +8,7 @@ export const NEW_POINT = {
   basePrice: 1,
   dateFrom: dayjs().toDate(),
   dateTo: dayjs().toDate(),
-  offers: [
-    {'title': 'Infotainment system', 'price': 50},
-    {'title': 'Order meal', 'price': 100},
-    {'title': 'Choose seats', 'price': 190},
-  ],
+  offers: [],
   destination: {},
   isFavorite: false,
 };

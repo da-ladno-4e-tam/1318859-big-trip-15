@@ -6,9 +6,9 @@ import DestinationView from './destination.js';
 import flatpickr from 'flatpickr';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 
-const createEventFormButtonsTemplate = (id, isSubmitDisabled, isDisabled, isSaving, isDeleting) => (
+const createEventFormButtonsTemplate = (id, isDisabled, isSaving, isDeleting) => (
   id
-    ? `<button class="event__save-btn  btn  btn--blue" type="submit" ${(isSubmitDisabled || isDisabled) ? 'disabled' : ''}>
+    ? `<button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>
 ${isSaving ? 'saving...' : 'save'}
 </button>
                   <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>
@@ -17,7 +17,7 @@ ${isSaving ? 'saving...' : 'save'}
                   <button class="event__rollup-btn" type="button">
                     <span class="visually-hidden">Open event</span>
                   </button>`
-    : `<button class="event__save-btn  btn  btn--blue" type="submit" ${(isSubmitDisabled || isDisabled) ? 'disabled' : ''}>
+    : `<button class="event__save-btn  btn  btn--blue" type="submit" ${isDisabled ? 'disabled' : ''}>
 ${isSaving ? 'saving...' : 'save'}
 </button>
                   <button class="event__reset-btn" type="reset" ${isDisabled ? 'disabled' : ''}>Cancel</button>`
@@ -44,7 +44,6 @@ const createEventFormTemplate = (data, towns, types) => {
     dateFrom = dayjs().toDate(),
     dateTo = dayjs().toDate(),
     destination = {},
-    isSubmitDisabled,
     isDisabled,
     isSaving,
     isDeleting,
@@ -60,7 +59,7 @@ const createEventFormTemplate = (data, towns, types) => {
   const offerItems = offersList.length ? offersComponent.getTemplate() : '';
   const description = Object.keys(data.destination).length > 1 ? offersDescription.getTemplate() : '';
 
-  const formButtonsTemplate = createEventFormButtonsTemplate(id, isSubmitDisabled, isDisabled, isSaving, isDeleting);
+  const formButtonsTemplate = createEventFormButtonsTemplate(id, isDisabled, isSaving, isDeleting);
 
   return `<li class="trip-events__item">
 <form class="event event--edit" action="#" method="post">
@@ -267,13 +266,13 @@ export default class EventForm extends SmartView {
   _dateFromChangeHandler([userDateFrom]) {
     this.updateData({
       dateFrom: userDateFrom,
-    });
+    }, true);
   }
 
   _dateToChangeHandler([userDateTo]) {
     this.updateData({
       dateTo: userDateTo,
-    });
+    }, true);
   }
 
   _offerChangeHandler(evt) {
@@ -292,7 +291,7 @@ export default class EventForm extends SmartView {
         [],
         updatedOffers,
       ),
-    });
+    }, true);
   }
 
   _priceInputHandler(evt) {
