@@ -1,5 +1,7 @@
 import dayjs from 'dayjs';
 
+export const MSEC_IN_DAY = 86400000;
+
 export const END_POINT = 'https://15.ecmascript.pages.academy/big-trip';
 export const AUTHORIZATION = 'Basic daladno4etamschasvsyobudet';
 
