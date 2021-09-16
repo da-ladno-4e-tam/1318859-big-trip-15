@@ -22,9 +22,6 @@ const createEventTemplate = (point) => {
   const {name: town = ''} = destination;
   const favoriteActiveClass = isFavorite ? 'event__favorite-btn--active' : '';
   const tripDuration = dayjs(dateTo).diff(dayjs(dateFrom), 'm');
-  console.log(dayjs.utc(dateTo));
-  console.log(dayjs.utc(dateFrom));
-  console.log(dayjs.utc(dateTo - dateFrom));
 
   const createActiveOfferTemplate = (title, price) => (`<li class="event__offer">
                     <span class="event__offer-title">${title}</span>
