@@ -36,7 +36,7 @@ const createEventTypeItemTemplate = (eventType, isChecked, isDisabled) => (
                         </div>`
 );
 
-const createEventFormTemplate = (data, towns, types, offers, point) => {
+const createEventFormTemplate = (data, towns, types) => {
   const {
     type = '',
     id = 0,
@@ -49,14 +49,15 @@ const createEventFormTemplate = (data, towns, types, offers, point) => {
     isSaving,
     isDeleting,
     offersList,
+    offers,
   } = data;
   const town = destination.name ? destination.name : '';
   const eventTypeItems = types.map((eventType) => createEventTypeItemTemplate(eventType, type === eventType), isDisabled).join('');
   const createTownItemTemplate = (townItem = '') => (`<option value="${townItem}"></option>`);
   const townItems = towns.map((townItem) => createTownItemTemplate(townItem)).join('');
-  const offersComponent = new OffersView(offersList, point);
+  const offersComponent = new OffersView(offersList, offers);
   const offersDescription = new DestinationView(data.destination);
-  const offerItems = offers.length ? offersComponent.getTemplate() : '';
+  const offerItems = offersList.length ? offersComponent.getTemplate() : '';
   const description = Object.keys(data.destination).length > 1 ? offersDescription.getTemplate() : '';
 
   const formButtonsTemplate = createEventFormButtonsTemplate(id, isSubmitDisabled, isDisabled, isSaving, isDeleting);
@@ -155,8 +156,8 @@ export default class EventForm extends SmartView {
     this._point = point;
     this._towns = this._destinationsModel.getDestinations().map((item) => item['name']);
     this._types = this._offersModel.getOffers().map((item) => item['type']);
-    this._offers = this._offersModel.getOffers().find((item) => item.type === point.type).offers;
-    this._data = this._pointsModel.parsePointToData(point);
+    this._data = this._pointsModel.parsePointToData(this._point);
+    this._offersList = this._offersModel.getOffers().find((item) => item.type === this._point.type).offers;
     this._dateFromPicker = null;
     this._dateToPicker = null;
 
@@ -196,7 +197,7 @@ export default class EventForm extends SmartView {
   }
 
   getTemplate() {
-    return createEventFormTemplate(this._data, this._towns, this._types, this._offers, this._point);
+    return createEventFormTemplate(this._data, this._towns, this._types);
   }
 
   restoreHandlers() {
@@ -256,7 +257,7 @@ export default class EventForm extends SmartView {
     this.getElement()
       .querySelector('#event-price-1')
       .addEventListener('input', this._priceInputHandler);
-    if (this._data.offers.length) {
+    if (this._data.offersList.length) {
       this.getElement()
         .querySelector('.event__available-offers')
         .addEventListener('change', this._offerChangeHandler);
@@ -277,15 +278,14 @@ export default class EventForm extends SmartView {
 
   _offerChangeHandler(evt) {
     evt.preventDefault();
-    console.log(evt);
-    const updatedOffers = [];
+    const updatedOffers = this._data.offers;
     const offerIndex = this._data.offers.map((offerItem) => offerItem.title).indexOf(evt.target.id);
     if (offerIndex !== -1) {
       evt.target.removeAttribute('checked');
-      updatedOffers.splice(offerIndex);
+      updatedOffers.splice(offerIndex, 1);
     } else {
       evt.target.setAttribute('checked', 'checked');
-      updatedOffers.push(this._offers.find((offerItem) => offerItem.title === evt.target.id));
+      updatedOffers.push(this._data.offersList.find((offerItem) => offerItem.title === evt.target.id));
     }
     this.updateData({
       offers: Object.assign(
@@ -306,7 +306,11 @@ export default class EventForm extends SmartView {
     evt.preventDefault();
     this.updateData({
       type: evt.target.value,
-      offersList: this._offersModel.getOffers().find((item) => item.type === evt.target.value).offers,
+      offers: [],
+      offersList: Object.assign(
+        [],
+        this._offersModel.getOffers().find((item) => item.type === evt.target.value).offers,
+      ),
     });
   }
 

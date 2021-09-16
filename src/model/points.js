@@ -79,10 +79,10 @@ export default class Points extends AbstractObserver {
     point.dateFrom = dayjs(point.dateFrom).toDate();
     point.dateTo = dayjs(point.dateTo).toDate();
 
-    delete data.isDisabled;
-    delete data.isSaving;
-    delete data.isDeleting;
-    delete data.offersList;
+    delete point.isDisabled;
+    delete point.isSaving;
+    delete point.isDeleting;
+    delete point.offersList;
     return point;
   }
 

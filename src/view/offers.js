@@ -1,7 +1,6 @@
 import AbstractView from './abstract.js';
 
 const createOffersTemplate = (offersList, checkedOffersList) => {
-  console.log(offersList);
   const createFormOfferTemplate = (offer = {}, id) => {
     const isChecked = (checkedOffersList.map((offerItem) => offerItem.title).includes(offer.title)) ? 'checked' : '';
     const offerTitle = offer.title ? offer.title : '';
@@ -27,13 +26,13 @@ const createOffersTemplate = (offersList, checkedOffersList) => {
 };
 
 export default class Offers extends AbstractView {
-  constructor(offers, point) {
+  constructor(offersList, offers) {
     super();
-    this._offers = offers;
-    this._checkedOffers = point.offers;
+    this._offersList = offersList;
+    this._checkedOffers = offers;
   }
 
   getTemplate() {
-    return createOffersTemplate(this._offers, this._checkedOffers);
+    return createOffersTemplate(this._offersList, this._checkedOffers);
   }
 }
