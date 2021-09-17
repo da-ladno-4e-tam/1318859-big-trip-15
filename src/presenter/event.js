@@ -1,6 +1,7 @@
 import EventFormView from '../view/event-form.js';
 import EventView from '../view/event.js';
 import {render, RenderPosition, replace, remove} from '../utils/render.js';
+import {isEscKey} from '../utils/common.js';
 import {UserAction, UpdateType} from '../const.js';
 
 const Mode = {
@@ -135,7 +136,7 @@ export default class Event {
   }
 
   _escKeyDownHandler(evt) {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
+    if (isEscKey(evt)) {
       this._eventFormComponent.reset(this._point);
       this._replaceFormToEvent();
     }

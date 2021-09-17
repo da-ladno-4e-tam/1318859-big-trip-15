@@ -9,3 +9,5 @@ export const getTripDurationFormat = (tripDuration) => {
     return 'mm[M]';
   }
 };
+
+export const isEscKey = (evt) => (evt.key === 'Escape' || evt.key === 'Esc');

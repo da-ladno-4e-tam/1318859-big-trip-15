@@ -1,5 +1,6 @@
 import EventFormView from '../view/event-form.js';
 import {remove, render, RenderPosition} from '../utils/render.js';
+import {isEscKey} from '../utils/common';
 import {NEW_POINT, UserAction, UpdateType} from '../const.js';
 
 export default class NewEventForm {
@@ -75,7 +76,7 @@ export default class NewEventForm {
   }
 
   _escKeyDownHandler(evt) {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
+    if (isEscKey(evt)) {
       this.destroy();
       document.querySelector('.trip-main__event-add-btn').removeAttribute('disabled');
     }
